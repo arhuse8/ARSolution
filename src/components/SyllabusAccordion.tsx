@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { BoardId, Chapter, SyllabusData } from '../types';
 import { SYLLABUS_DATABASE, SUPPORTED_BOARDS } from '../data/mockData';
+import { useTheme } from '../context/ThemeContext';
 
 interface SyllabusAccordionProps {
   selectedClass: number;
@@ -32,6 +33,8 @@ export const SyllabusAccordion: React.FC<SyllabusAccordionProps> = ({
   onRequestTutor,
   onOpenAiAdvisor,
 }) => {
+  const { isMidnight } = useTheme();
+
   // If multiple subjects are selected, let parent toggle between them
   const [activeSubjectTab, setActiveSubjectTab] = useState<string>(
     selectedSubjects[0] || 'math'
@@ -72,19 +75,29 @@ export const SyllabusAccordion: React.FC<SyllabusAccordionProps> = ({
   return (
     <div
       id="syllabus-panel"
-      className="mt-8 bg-white rounded-3xl p-5 sm:p-8 md:p-10 border border-orange-100 shadow-rising scroll-mt-24 transition-all duration-300 animate-fade-in"
+      className={`mt-8 rounded-3xl p-5 sm:p-8 md:p-10 border shadow-rising scroll-mt-24 transition-all duration-300 animate-fade-in ${
+        isMidnight
+          ? 'bg-[#0F172A] border-orange-500/25 shadow-2xl shadow-black/80 text-white'
+          : 'bg-white border-orange-100 shadow-rising text-slate-900'
+      }`}
     >
       {/* Header bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-slate-100 gap-4">
+      <div className={`flex flex-col md:flex-row md:items-center justify-between pb-6 border-b gap-4 ${isMidnight ? 'border-slate-800' : 'border-slate-100'}`}>
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-50 border border-orange-200/60 text-orange-800 text-xs font-bold mb-2">
-            <BookOpen className="w-3.5 h-3.5" />
+          <div
+            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold mb-2 border ${
+              isMidnight
+                ? 'bg-orange-500/15 border-orange-400/30 text-amber-300'
+                : 'bg-orange-50 border-orange-200/60 text-orange-800'
+            }`}
+          >
+            <BookOpen className="w-3.5 h-3.5 text-orange-500" />
             <span>Official Curriculum & Syllabus Overview</span>
           </div>
-          <h3 className="text-2xl sm:text-3xl font-extrabold text-[#0F172A] tracking-tight">
+          <h3 className={`text-2xl sm:text-3xl font-extrabold tracking-tight ${isMidnight ? 'text-white' : 'text-[#0F172A]'}`}>
             Class {selectedClass} • {boardName} Syllabus
           </h3>
-          <p className="text-xs sm:text-sm text-[#64748B] mt-1">
+          <p className={`text-xs sm:text-sm mt-1 ${isMidnight ? 'text-slate-400' : 'text-[#64748B]'}`}>
             Understand key chapters, unit weightage, and learning objectives before beginning tuition.
           </p>
         </div>
@@ -94,9 +107,13 @@ export const SyllabusAccordion: React.FC<SyllabusAccordionProps> = ({
           <button
             type="button"
             onClick={onOpenAiAdvisor}
-            className="inline-flex items-center gap-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold px-3.5 py-2 rounded-xl border border-indigo-200 transition-colors cursor-pointer"
+            className={`inline-flex items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl border transition-colors cursor-pointer ${
+              isMidnight
+                ? 'bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border-indigo-500/40'
+                : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border-indigo-200'
+            }`}
           >
-            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
             <span>AI Chapter Breakdown</span>
           </button>
         </div>
@@ -105,7 +122,7 @@ export const SyllabusAccordion: React.FC<SyllabusAccordionProps> = ({
       {/* Multiple Subject Switcher Tabs (if user picked more than 1 subject) */}
       {selectedSubjects.length > 1 && (
         <div className="mt-6 flex flex-wrap items-center gap-2">
-          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider mr-1">
+          <span className={`text-xs font-bold uppercase tracking-wider mr-1 ${isMidnight ? 'text-slate-400' : 'text-slate-500'}`}>
             Subject:
           </span>
           {selectedSubjects.map((subId) => (
@@ -115,7 +132,9 @@ export const SyllabusAccordion: React.FC<SyllabusAccordionProps> = ({
               onClick={() => setActiveSubjectTab(subId)}
               className={`text-xs font-bold px-3.5 py-1.5 rounded-xl border transition-all cursor-pointer ${
                 activeSubjectTab === subId
-                  ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+                  ? 'bg-gradient-to-r from-indigo-700 via-rose-600 to-orange-500 text-white border-orange-500 shadow-sm'
+                  : isMidnight
+                  ? 'bg-[#131B2E] hover:bg-[#1A2640] text-slate-300 border-slate-700'
                   : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
               }`}
             >
@@ -129,7 +148,13 @@ export const SyllabusAccordion: React.FC<SyllabusAccordionProps> = ({
       {syllabusData ? (
         <div className="mt-6">
           {/* Syllabus Meta Highlights */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-200/80 mb-6">
+          <div
+            className={`grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 rounded-2xl border mb-6 ${
+              isMidnight
+                ? 'bg-[#131B2E] border-slate-800'
+                : 'bg-slate-50 border-slate-200/80'
+            }`}
+          >
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center">
                 <Layers className="w-4 h-4" />

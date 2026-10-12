@@ -9,37 +9,149 @@
   body {
     background-color: #FAF9F6;
     color: #0F172A;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* High-Contrast Midnight Mode Overrides */
+  html.midnight body {
+    background-color: #070A13;
+    color: #F8FAFC;
   }
 }
 
-/* Rising sun & dawn ambient gradients */
+/* =========================================================================
+   VIBRANT SUNSET & DAWN THEME GRADIENTS & ACCENTS
+   ========================================================================= */
+
+/* Radiant Sunset-Dawn multi-stop gradient (Violet -> Coral -> Sunset Orange -> Golden Amber) */
+.bg-sunset-gradient,
 .bg-rising-gradient {
-  background: linear-gradient(135deg, #4338CA 0%, #4F46E5 40%, #E11D48 85%, #F97316 100%);
+  background: linear-gradient(135deg, #4338CA 0%, #7C3AED 28%, #E11D48 65%, #EA580C 85%, #F59E0B 100%);
 }
 
-.bg-rising-warm {
-  background: linear-gradient(135deg, #FFEDD5 0%, #FEF3C7 50%, #EDE9FE 100%);
+.bg-sunset-gradient-hover:hover,
+.bg-rising-gradient-hover:hover {
+  background: linear-gradient(135deg, #4F46E5 0%, #8B5CF6 28%, #F43F5E 65%, #F97316 85%, #FBBF24 100%);
 }
 
-.bg-rising-subtle {
-  background: radial-gradient(circle at 50% 0%, rgba(254, 215, 170, 0.3) 0%, rgba(238, 242, 255, 0.4) 40%, rgba(250, 249, 246, 0.8) 100%);
-}
-
+.text-sunset-gradient,
 .text-rising-gradient {
-  background: linear-gradient(135deg, #4338CA 0%, #6366F1 45%, #EA580C 100%);
+  background: linear-gradient(135deg, #4338CA 0%, #8B5CF6 25%, #E11D48 55%, #EA580C 80%, #F59E0B 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
+/* In Midnight mode, pump up the brightness and saturation for high contrast */
+html.midnight .text-sunset-gradient,
+html.midnight .text-rising-gradient {
+  background: linear-gradient(135deg, #818CF8 0%, #C084FC 25%, #FB7185 55%, #FB923C 80%, #FDE047 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Subtle dawn / rising background cones */
+.bg-dawn-subtle,
+.bg-rising-subtle {
+  background: radial-gradient(circle at 50% 0%, rgba(254, 215, 170, 0.35) 0%, rgba(238, 242, 255, 0.45) 45%, rgba(250, 249, 246, 0.9) 100%);
+}
+
+html.midnight .bg-dawn-subtle,
+html.midnight .bg-rising-subtle {
+  background: radial-gradient(circle at 50% -10%, rgba(249, 115, 22, 0.16) 0%, rgba(99, 102, 241, 0.18) 35%, rgba(7, 10, 19, 0.98) 100%);
+}
+
+/* =========================================================================
+   HIGH-CONTRAST CARD & SURFACE UTILITIES
+   ========================================================================= */
+
+/* Elevated Card styles for both Dawn and Midnight */
+.theme-card {
+  background-color: #FFFFFF;
+  border-color: rgba(254, 215, 170, 0.7);
+  color: #0F172A;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 20px -2px rgba(249, 115, 22, 0.08), 0 2px 6px -1px rgba(67, 56, 202, 0.04);
+}
+
+html.midnight .theme-card {
+  background-color: #0F172A;
+  border-color: rgba(249, 115, 22, 0.25);
+  color: #F8FAFC;
+  box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.6), 0 0 20px -2px rgba(249, 115, 22, 0.15);
+}
+
+html.midnight .theme-card:hover {
+  border-color: rgba(251, 146, 60, 0.5);
+  box-shadow: 0 12px 35px -4px rgba(0, 0, 0, 0.8), 0 0 25px -2px rgba(249, 115, 22, 0.25);
+}
+
+/* Sub-card surface (inner modules, chips) */
+.theme-surface-subtle {
+  background-color: #F8FAFC;
+  border-color: #E2E8F0;
+  color: #1E293B;
+}
+
+html.midnight .theme-surface-subtle {
+  background-color: #162036;
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #E2E8F0;
+}
+
+/* Input boxes */
+.theme-input {
+  background-color: #FFFFFF;
+  border-color: #CBD5E1;
+  color: #0F172A;
+}
+
+html.midnight .theme-input {
+  background-color: #131B2E;
+  border-color: #334155;
+  color: #F8FAFC;
+}
+
+html.midnight .theme-input::placeholder {
+  color: #64748B;
+}
+
+html.midnight .theme-input:focus {
+  background-color: #17223B;
+  border-color: #FB923C;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.35);
+}
+
+/* Glow shadows */
 .shadow-rising {
-  box-shadow: 0 10px 30px -10px rgba(249, 115, 22, 0.15), 0 4px 12px -2px rgba(67, 56, 202, 0.08);
+  box-shadow: 0 10px 30px -10px rgba(249, 115, 22, 0.2), 0 4px 12px -2px rgba(67, 56, 202, 0.08);
+}
+
+html.midnight .shadow-rising {
+  box-shadow: 0 12px 36px -8px rgba(0, 0, 0, 0.7), 0 0 25px 2px rgba(249, 115, 22, 0.25);
 }
 
 .shadow-rising-hover:hover {
-  box-shadow: 0 16px 36px -10px rgba(249, 115, 22, 0.22), 0 6px 16px -2px rgba(67, 56, 202, 0.12);
+  box-shadow: 0 16px 40px -10px rgba(249, 115, 22, 0.3), 0 6px 16px -2px rgba(67, 56, 202, 0.15);
   transform: translateY(-2px);
 }
 
+/* High contrast text helpers */
+.text-high-contrast {
+  color: #0F172A;
+}
+html.midnight .text-high-contrast {
+  color: #FFFFFF;
+}
+
+.text-subtle-contrast {
+  color: #64748B;
+}
+html.midnight .text-subtle-contrast {
+  color: #94A3B8;
+}
+
+/* Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;

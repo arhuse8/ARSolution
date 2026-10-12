@@ -23,8 +23,11 @@ import { FAQSection } from './components/FAQSection';
 import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
 import { Toast, ToastMessage } from './components/Toast';
+import { useTheme } from './context/ThemeContext';
 
 export default function App() {
+  const { isMidnight } = useTheme();
+
   // Discovery State
   const [selectedClass, setSelectedClass] = useState<number | null>(10);
   const [selectedBoard, setSelectedBoard] = useState<BoardId>('cbse');
@@ -144,7 +147,13 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF9F6] text-[#0F172A] flex flex-col antialiased selection:bg-orange-100 selection:text-orange-950">
+    <div
+      className={`min-h-screen flex flex-col antialiased transition-colors duration-300 ${
+        isMidnight
+          ? 'bg-[#070A13] text-slate-100 selection:bg-orange-500 selection:text-white'
+          : 'bg-[#FAF9F6] text-[#0F172A] selection:bg-orange-100 selection:text-orange-950'
+      }`}
+    >
       {/* Toast Notifications */}
       <Toast toasts={toasts} onDismiss={removeToast} />
 

@@ -23,11 +23,11 @@ export const Footer: React.FC<FooterProps> = ({
           {/* Brand Info */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white">
-                <GraduationCap className="w-5 h-5" />
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 via-rose-500 to-amber-400 flex items-center justify-center text-white shadow-md shadow-orange-500/20">
+                <GraduationCap className="w-5 h-5 text-white" />
               </div>
               <span className="font-extrabold text-xl text-white tracking-tight">
-                AR Solution <span className="text-indigo-400 font-semibold text-sm">Home Tutor</span>
+                AR Solution <span className="text-amber-300 font-semibold text-sm">Home Tutor</span>
               </span>
             </div>
 
