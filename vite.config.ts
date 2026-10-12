@@ -3,10 +3,10 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 import {defineConfig} from 'vite';
 
-// In GitHub Pages (or when building for production on GitHub), base path is '/ARSolution/'
-const base = process.env.VITE_BASE_PATH || (process.env.GITHUB_PAGES === 'true' || process.env.CI ? '/ARSolution/' : '/ARSolution/');
+export default defineConfig(({ command }) => {
+  // Use '/ARSolution/' when building for GitHub Pages, and '/' for local dev / preview
+  const base = command === 'build' ? (process.env.VITE_BASE_PATH || '/ARSolution/') : '/';
 
-export default defineConfig(() => {
   return {
     base,
     plugins: [react(), tailwindcss()],
