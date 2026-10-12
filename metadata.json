@@ -1,0 +1,6 @@
+{
+  "name": "AR Solution Home Tutor",
+  "description": "Find verified home and online tutors for Classes 1–12 across CBSE, ICSE, and Maharashtra State Board with syllabus exploration and teacher registration.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

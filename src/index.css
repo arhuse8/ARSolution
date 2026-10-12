@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  }
+
+  body {
+    background-color: #FAF9F6;
+    color: #0F172A;
+  }
+}
+
+/* Rising sun & dawn ambient gradients */
+.bg-rising-gradient {
+  background: linear-gradient(135deg, #4338CA 0%, #4F46E5 40%, #E11D48 85%, #F97316 100%);
+}
+
+.bg-rising-warm {
+  background: linear-gradient(135deg, #FFEDD5 0%, #FEF3C7 50%, #EDE9FE 100%);
+}
+
+.bg-rising-subtle {
+  background: radial-gradient(circle at 50% 0%, rgba(254, 215, 170, 0.3) 0%, rgba(238, 242, 255, 0.4) 40%, rgba(250, 249, 246, 0.8) 100%);
+}
+
+.text-rising-gradient {
+  background: linear-gradient(135deg, #4338CA 0%, #6366F1 45%, #EA580C 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.shadow-rising {
+  box-shadow: 0 10px 30px -10px rgba(249, 115, 22, 0.15), 0 4px 12px -2px rgba(67, 56, 202, 0.08);
+}
+
+.shadow-rising-hover:hover {
+  box-shadow: 0 16px 36px -10px rgba(249, 115, 22, 0.22), 0 6px 16px -2px rgba(67, 56, 202, 0.12);
+  transform: translateY(-2px);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-scale-up {
+  animation: scaleUp 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
