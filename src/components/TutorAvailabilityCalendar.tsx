@@ -404,7 +404,7 @@ export const TutorAvailabilityCalendar: React.FC<TutorAvailabilityCalendarProps>
                 No slots open on {DAYS_OF_WEEK.find((d) => d.key === activeDay)?.full}
               </p>
               <p className={`text-xs mt-0.5 ${isMidnight ? 'text-slate-400' : 'text-slate-500'}`}>
-                {tutor.name} is available on {tutor.availableDays.join(', ')}. Please choose another day above.
+                Verified Teacher #{tutor.id.replace('tut-', '')} is available on {tutor.availableDays.join(', ')}. Please choose another day above.
               </p>
             </div>
           )}
@@ -520,7 +520,7 @@ export const TutorAvailabilityCalendar: React.FC<TutorAvailabilityCalendarProps>
                 </span>
               </p>
               <p className={`text-[11px] ${isMidnight ? 'text-slate-400' : 'text-indigo-800/80'}`}>
-                Free 45-minute demo class with {tutor.name} (Rate: ₹{tutor.feePerHour}/hr)
+                Free 45-minute demo class with Verified Teacher #{tutor.id.replace('tut-', '')} (Rate: ₹{tutor.feePerHour}/hr)
               </p>
             </div>
           </div>

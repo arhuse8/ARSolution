@@ -9,7 +9,9 @@ import {
   Search,
   Moon,
   Sun,
+  MessageCircle,
 } from 'lucide-react';
+import { COORDINATOR_DISPLAY_PHONE, COORDINATOR_PHONE_RAW } from '../utils/whatsapp';
 import { useTheme } from '../context/ThemeContext';
 
 interface HeaderProps {
@@ -18,6 +20,8 @@ interface HeaderProps {
   onOpenAiAdvisor: () => void;
   onScrollToClasses: () => void;
   onScrollToFaq: () => void;
+  onScrollToAbout: () => void;
+  onOpenInbox?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -26,6 +30,8 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenAiAdvisor,
   onScrollToClasses,
   onScrollToFaq,
+  onScrollToAbout,
+  onOpenInbox,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { theme, toggleTheme, isMidnight } = useTheme();
@@ -101,6 +107,14 @@ export const Header: React.FC<HeaderProps> = ({
               Find a Tutor
             </button>
             <button
+              onClick={onScrollToAbout}
+              className={`text-sm font-semibold transition-colors cursor-pointer ${
+                isMidnight ? 'text-slate-200 hover:text-amber-400' : 'text-slate-700 hover:text-indigo-700'
+              }`}
+            >
+              About ARsolution
+            </button>
+            <button
               onClick={onOpenAiAdvisor}
               className={`inline-flex items-center gap-1.5 text-sm font-bold transition-colors cursor-pointer ${
                 isMidnight ? 'text-amber-300 hover:text-amber-200' : 'text-indigo-700 hover:text-orange-600'
@@ -121,6 +135,39 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Right Action Buttons */}
           <div className="hidden sm:flex items-center gap-3">
+            {/* Coordinator Inbox Button */}
+            {onOpenInbox && (
+              <button
+                onClick={onOpenInbox}
+                className={`hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer shadow-xs ${
+                  isMidnight
+                    ? 'bg-indigo-500/15 text-indigo-300 border-indigo-500/30 hover:bg-indigo-500/25'
+                    : 'bg-indigo-50 text-indigo-900 border-indigo-200 hover:bg-indigo-100'
+                }`}
+                title="View all user direct messages received"
+              >
+                <MessageCircle className="w-3.5 h-3.5 text-indigo-500" />
+                <span>📥 Coordinator Inbox</span>
+              </button>
+            )}
+
+            {/* Direct WhatsApp Coordinator Pill */}
+            <a
+              href={`https://wa.me/91${COORDINATOR_PHONE_RAW}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer shadow-xs ${
+                isMidnight
+                  ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/25'
+                  : 'bg-emerald-50 text-emerald-800 border-emerald-200 hover:bg-emerald-100'
+              }`}
+              title={`Direct WhatsApp to coordinator: ${COORDINATOR_DISPLAY_PHONE}`}
+            >
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+              <MessageCircle className="w-3.5 h-3.5 text-emerald-500 fill-current" />
+              <span>WhatsApp: {COORDINATOR_PHONE_RAW}</span>
+            </a>
+
             {/* High-Contrast Midnight Theme Mode Toggle */}
             <button
               onClick={toggleTheme}
@@ -223,6 +270,15 @@ export const Header: React.FC<HeaderProps> = ({
             Choose Class & Find a Tutor
           </button>
           <button
+            onClick={() => handleNavClick(onScrollToAbout)}
+            className={`w-full text-left py-2.5 px-3.5 rounded-xl text-sm font-medium flex items-center gap-2.5 ${
+              isMidnight ? 'hover:bg-white/10 text-slate-200' : 'hover:bg-orange-50/70 text-slate-800'
+            }`}
+          >
+            <GraduationCap className="w-4 h-4 text-orange-500" />
+            About ARsolution
+          </button>
+          <button
             onClick={() => handleNavClick(onOpenAiAdvisor)}
             className={`w-full text-left py-2.5 px-3.5 rounded-xl text-sm font-bold flex items-center gap-2.5 ${
               isMidnight ? 'bg-orange-500/20 text-amber-300' : 'bg-indigo-50 text-indigo-800'
@@ -266,7 +322,27 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
           </div>
 
-          <div className="pt-2">
+          <div className="pt-2 space-y-2">
+            {onOpenInbox && (
+              <button
+                onClick={() => handleNavClick(onOpenInbox)}
+                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold py-2.5 px-3 rounded-xl text-center text-xs flex items-center justify-center gap-2 shadow-sm"
+              >
+                <MessageCircle className="w-4 h-4 fill-current" />
+                <span>📥 View Coordinator Messages Inbox</span>
+              </button>
+            )}
+
+            <a
+              href={`https://wa.me/91${COORDINATOR_PHONE_RAW}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-2.5 px-3 rounded-xl text-center text-xs flex items-center justify-center gap-2 shadow-sm"
+            >
+              <MessageCircle className="w-4 h-4 fill-current" />
+              <span>Chat on WhatsApp: {COORDINATOR_PHONE_RAW}</span>
+            </a>
+
             <button
               onClick={() => handleNavClick(onFindTutorClick)}
               className="w-full bg-gradient-to-r from-indigo-700 via-rose-600 to-amber-500 text-white font-black py-3 rounded-xl text-center text-sm shadow-md"

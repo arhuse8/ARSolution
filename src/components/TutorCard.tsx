@@ -35,18 +35,22 @@ export const TutorCard: React.FC<TutorCardProps> = ({
       <div>
         {/* Top Header: Photo, Name, Verification, Rating */}
         <div className="flex items-start gap-4">
-          <div className="relative shrink-0">
+          <div className="relative shrink-0 w-18 h-18 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 shadow-xs">
             <img
               src={tutor.photoUrl}
-              alt={tutor.name}
-              className={`w-18 h-18 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 shadow-xs ${
+              alt="Teacher photo (blurred for privacy)"
+              className={`w-full h-full object-cover filter blur-md scale-125 select-none pointer-events-none ${
                 isMidnight ? 'border-slate-700' : 'border-slate-100'
               }`}
               loading="lazy"
             />
+            <div className="absolute inset-0 bg-black/15 pointer-events-none" />
+            <div className="absolute bottom-1 left-1 bg-black/60 backdrop-blur-xs text-[9px] text-white/90 px-1 py-0.2 rounded font-medium pointer-events-none">
+              Blurred
+            </div>
             {tutor.verified && (
               <div
-                className="absolute -bottom-1 -right-1 bg-gradient-to-tr from-emerald-600 to-emerald-500 text-white p-1 rounded-full shadow-xs"
+                className="absolute top-1 right-1 bg-gradient-to-tr from-emerald-600 to-emerald-500 text-white p-1 rounded-full shadow-xs"
                 title="Identity & Degree Verified"
               >
                 <ShieldCheck className="w-3.5 h-3.5 stroke-[2.5]" />
@@ -56,13 +60,25 @@ export const TutorCard: React.FC<TutorCardProps> = ({
 
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center justify-between gap-1">
-              <h4
-                className={`text-base sm:text-lg font-bold transition-colors truncate ${
-                  isMidnight ? 'text-white group-hover:text-amber-300' : 'text-slate-900 group-hover:text-indigo-700'
-                }`}
-              >
-                {tutor.name}
-              </h4>
+              <div className="flex items-center gap-1.5 min-w-0">
+                <h4
+                  className={`text-base sm:text-lg font-bold transition-colors truncate ${
+                    isMidnight ? 'text-white group-hover:text-amber-300' : 'text-slate-900 group-hover:text-indigo-700'
+                  }`}
+                >
+                  Verified Teacher #{tutor.id.replace('tut-', '')}
+                </h4>
+                <span
+                  className={`text-[10px] font-semibold px-1.5 py-0.5 rounded border shrink-0 ${
+                    isMidnight
+                      ? 'bg-slate-800 text-slate-400 border-slate-700'
+                      : 'bg-slate-100 text-slate-500 border-slate-200'
+                  }`}
+                  title="Teacher name is protected for privacy"
+                >
+                  Name Hidden
+                </span>
+              </div>
               <div
                 className={`flex items-center gap-1 px-2 py-0.5 rounded-lg border ${
                   isMidnight

@@ -20,9 +20,13 @@ import { TrustFeatures } from './components/TrustFeatures';
 import { TestimonialsSection } from './components/TestimonialsSection';
 import { JoinTeacherBanner } from './components/JoinTeacherBanner';
 import { FAQSection } from './components/FAQSection';
+import { AboutSection } from './components/AboutSection';
+import { AboutModal } from './components/AboutModal';
 import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
 import { Toast, ToastMessage } from './components/Toast';
+import { FloatingWhatsAppWidget } from './components/FloatingWhatsAppWidget';
+import { CoordinatorInboxModal } from './components/CoordinatorInboxModal';
 import { useTheme } from './context/ThemeContext';
 
 export default function App() {
@@ -45,6 +49,8 @@ export default function App() {
   const [selectedSlotForBooking, setSelectedSlotForBooking] = useState<TimeSlot | null>(null);
   const [aiAdvisorModalOpen, setAiAdvisorModalOpen] = useState<boolean>(false);
   const [legalModalType, setLegalModalType] = useState<'privacy' | 'terms' | null>(null);
+  const [aboutModalOpen, setAboutModalOpen] = useState<boolean>(false);
+  const [coordinatorInboxOpen, setCoordinatorInboxOpen] = useState<boolean>(false);
 
   // Toast Notifications State
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
@@ -113,6 +119,11 @@ export default function App() {
     el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
+  const handleScrollToAbout = () => {
+    const el = document.getElementById('about-arsolution');
+    el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   const handleViewSyllabus = () => {
     setShowSyllabus(true);
     setTimeout(() => {
@@ -164,6 +175,8 @@ export default function App() {
         onOpenAiAdvisor={() => setAiAdvisorModalOpen(true)}
         onScrollToClasses={handleScrollToClasses}
         onScrollToFaq={handleScrollToFaq}
+        onScrollToAbout={handleScrollToAbout}
+        onOpenInbox={() => setCoordinatorInboxOpen(true)}
       />
 
       {/* Main Single Page Content */}
@@ -251,6 +264,13 @@ export default function App() {
         {/* Trust & Safety Features */}
         <TrustFeatures />
 
+        {/* Dedicated About ARsolution Section */}
+        <AboutSection
+          onFindTutorClick={handleScrollToClasses}
+          onJoinTeacherClick={() => setTeacherModalOpen(true)}
+          onOpenFullStory={() => setAboutModalOpen(true)}
+        />
+
         {/* Parent & Student Testimonials */}
         <TestimonialsSection />
 
@@ -268,6 +288,7 @@ export default function App() {
         onScrollToFaq={handleScrollToFaq}
         onOpenPrivacy={() => setLegalModalType('privacy')}
         onOpenTerms={() => setLegalModalType('terms')}
+        onOpenAbout={() => setAboutModalOpen(true)}
       />
 
       {/* MODALS */}
@@ -331,6 +352,26 @@ export default function App() {
       <LegalModal
         type={legalModalType}
         onClose={() => setLegalModalType(null)}
+      />
+
+      {/* 6. About ARsolution Modal (Full Story, Mission & Philosophy) */}
+      <AboutModal
+        isOpen={aboutModalOpen}
+        onClose={() => setAboutModalOpen(false)}
+        onFindTutor={handleScrollToClasses}
+        onJoinTeacher={() => setTeacherModalOpen(true)}
+      />
+
+      {/* Floating 24/7 WhatsApp Coordinator & Fast Tutor Match Widget */}
+      <FloatingWhatsAppWidget
+        onRequestTutorClick={() => setTutorRequestModalOpen(true)}
+        onOpenInbox={() => setCoordinatorInboxOpen(true)}
+      />
+
+      {/* 7. Coordinator Direct Messages Inbox Modal */}
+      <CoordinatorInboxModal
+        isOpen={coordinatorInboxOpen}
+        onClose={() => setCoordinatorInboxOpen(false)}
       />
     </div>
   );

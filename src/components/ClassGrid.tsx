@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   BookOpen,
   Calculator,
@@ -12,6 +12,8 @@ import {
   Award,
   BookMarked,
   BrainCircuit,
+  Flame,
+  Zap,
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 
@@ -20,28 +22,36 @@ interface ClassGridProps {
   onSelectClass: (classNum: number) => void;
 }
 
+type ClassCategory = 'all' | 'primary' | 'middle' | 'boards' | 'senior';
+
 const CLASS_CONFIGS = [
-  { num: 1, label: 'Primary Foundation', icon: BookOpen, tag: 'Classes 1–5' },
-  { num: 2, label: 'Early Learning', icon: Sparkles, tag: 'Classes 1–5' },
-  { num: 3, label: 'Core Fundamentals', icon: Calculator, tag: 'Classes 1–5' },
-  { num: 4, label: 'Foundational Concepts', icon: Compass, tag: 'Classes 1–5' },
-  { num: 5, label: 'Primary Board Prep', icon: School, tag: 'Classes 1–5' },
-  { num: 6, label: 'Middle School Intro', icon: BookMarked, tag: 'Classes 6–8' },
-  { num: 7, label: 'Concept Deepening', icon: Layers, tag: 'Classes 6–8' },
-  { num: 8, label: 'Pre-Secondary Bridge', icon: Atom, tag: 'Classes 6–8' },
-  { num: 9, label: 'Secondary Foundation', icon: BrainCircuit, tag: 'Classes 9–10' },
-  { num: 10, label: 'Board Exam Special', icon: Award, tag: 'Board Exam' },
-  { num: 11, label: 'Senior Streams', icon: Compass, tag: 'Class 11' },
-  { num: 12, label: 'Senior Board / Entrance', icon: GraduationCap, tag: 'Board Exam' },
+  { num: 1, label: 'Primary Foundation', icon: BookOpen, tag: 'Classes 1–5', category: 'primary' },
+  { num: 2, label: 'Early Learning', icon: Sparkles, tag: 'Classes 1–5', category: 'primary' },
+  { num: 3, label: 'Core Fundamentals', icon: Calculator, tag: 'Classes 1–5', category: 'primary' },
+  { num: 4, label: 'Foundational Concepts', icon: Compass, tag: 'Classes 1–5', category: 'primary' },
+  { num: 5, label: 'Primary Board Prep', icon: School, tag: 'Classes 1–5', category: 'primary' },
+  { num: 6, label: 'Middle School Intro', icon: BookMarked, tag: 'Classes 6–8', category: 'middle' },
+  { num: 7, label: 'Concept Deepening', icon: Layers, tag: 'Classes 6–8', category: 'middle' },
+  { num: 8, label: 'Pre-Secondary Bridge', icon: Atom, tag: 'Classes 6–8', category: 'middle' },
+  { num: 9, label: 'Secondary Foundation', icon: BrainCircuit, tag: 'Classes 9–10', category: 'boards' },
+  { num: 10, label: '10th Board Exam 🔥', icon: Award, tag: 'Board Exam', category: 'boards' },
+  { num: 11, label: 'Senior Streams (Sci/Com/Arts)', icon: Compass, tag: 'Class 11', category: 'senior' },
+  { num: 12, label: '12th Board / JEE / NEET 🚀', icon: GraduationCap, tag: 'Board Exam', category: 'senior' },
 ];
 
 export const ClassGrid: React.FC<ClassGridProps> = ({ selectedClass, onSelectClass }) => {
   const { isMidnight } = useTheme();
+  const [activeCategory, setActiveCategory] = useState<ClassCategory>('all');
+
+  const filteredClasses = CLASS_CONFIGS.filter((item) => {
+    if (activeCategory === 'all') return true;
+    return item.category === activeCategory;
+  });
 
   return (
     <div id="class-selection-section" className="scroll-mt-24">
       {/* Header text with warm rising badge */}
-      <div className="text-center max-w-2xl mx-auto mb-7 sm:mb-9">
+      <div className="text-center max-w-2xl mx-auto mb-6 sm:mb-8">
         <div
           className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold mb-2.5 border ${
             isMidnight
@@ -49,27 +59,57 @@ export const ClassGrid: React.FC<ClassGridProps> = ({ selectedClass, onSelectCla
               : 'bg-orange-50 border-orange-200/80 text-orange-800'
           }`}
         >
-          <span>Step 1 • Student Class</span>
+          <Zap className="w-3.5 h-3.5 text-orange-500" />
+          <span>Step 1 • Pick Grade to Match Tutor</span>
         </div>
         <h2
-          className={`text-2xl sm:text-3.5xl font-extrabold tracking-tight ${
+          className={`text-2xl sm:text-3.5xl font-black tracking-tight ${
             isMidnight ? 'text-white' : 'text-[#0F172A]'
           }`}
         >
           Choose Your Child's Class
         </h2>
         <p
-          className={`mt-1.5 text-xs sm:text-sm max-w-md mx-auto ${
+          className={`mt-1 text-xs sm:text-sm max-w-md mx-auto ${
             isMidnight ? 'text-slate-400' : 'text-slate-500'
           }`}
         >
-          Tap a class to explore available boards, syllabus chapters, and verified home tutors.
+          Tap any grade to view syllabus, subject breakdown, and match verified tutors with free demo classes.
         </p>
+
+        {/* Gen Z Category Filter Pills */}
+        <div className="flex flex-wrap items-center justify-center gap-2 mt-4 pt-1">
+          {[
+            { id: 'all', label: 'All Grades (1–12)' },
+            { id: 'primary', label: '🐣 Primary (1–5)' },
+            { id: 'middle', label: '🚀 Middle (6–8)' },
+            { id: 'boards', label: '🎯 Boards (9–10)' },
+            { id: 'senior', label: '⚡ Senior & Entrances (11–12)' },
+          ].map((cat) => {
+            const isActive = activeCategory === cat.id;
+            return (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => setActiveCategory(cat.id as ClassCategory)}
+                className={`px-3 py-1.5 rounded-full text-xs font-extrabold transition-all duration-200 cursor-pointer ${
+                  isActive
+                    ? 'bg-gradient-to-r from-indigo-600 via-rose-600 to-orange-500 text-white shadow-md scale-105'
+                    : isMidnight
+                    ? 'bg-[#131B2E] text-slate-300 border border-slate-700/80 hover:border-amber-400/50 hover:text-white'
+                    : 'bg-white text-slate-700 border border-slate-200 hover:border-orange-300 hover:bg-orange-50/50'
+                }`}
+              >
+                {cat.label}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Grid: Mobile 2 cols, Tablet 3-4 cols, Laptop 4 cols, Desktop 6 cols */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
-        {CLASS_CONFIGS.map((item) => {
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 animate-fade-in">
+        {filteredClasses.map((item) => {
           const Icon = item.icon;
           const isSelected = selectedClass === item.num;
 
@@ -87,7 +127,7 @@ export const ClassGrid: React.FC<ClassGridProps> = ({ selectedClass, onSelectCla
               tabIndex={0}
               aria-label={`Select Class ${item.num} to explore boards, subjects and tutors`}
               aria-pressed={isSelected}
-              className={`group relative flex flex-col justify-between p-4 sm:p-5 rounded-2xl text-left transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-3 focus-visible:ring-orange-500 ${
+              className={`group relative flex flex-col justify-between p-4 sm:p-5 rounded-2xl text-left transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-3 focus-visible:ring-orange-500 active:scale-98 ${
                 isSelected
                   ? 'bg-gradient-to-br from-indigo-700 via-rose-600 to-orange-500 text-white shadow-rising ring-2 ring-orange-500 scale-[1.02]'
                   : isMidnight

@@ -633,7 +633,7 @@ export const SYLLABUS_DATABASE: Record<string, SyllabusData> = {
 export const MOCK_TUTORS: Tutor[] = [
   {
     id: 'tut-001',
-    name: 'Prof. Rajesh Kulkarni',
+    name: 'Verified Teacher #001',
     photoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400',
     gender: 'Male',
     qualification: 'M.Sc. Mathematics, B.Ed (Gold Medalist, Mumbai University)',
@@ -660,7 +660,7 @@ export const MOCK_TUTORS: Tutor[] = [
   },
   {
     id: 'tut-002',
-    name: 'Dr. Sneha Deshmukh',
+    name: 'Verified Teacher #002',
     photoUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400',
     gender: 'Female',
     qualification: 'Ph.D. in Physics (IIT Bombay), B.Tech (VJTI Mumbai)',
@@ -687,7 +687,7 @@ export const MOCK_TUTORS: Tutor[] = [
   },
   {
     id: 'tut-003',
-    name: 'Anjali Sharma',
+    name: 'Verified Teacher #003',
     photoUrl: 'https://images.unsplash.com/photo-1580894732444-8ecded7900cd?auto=format&fit=crop&q=80&w=400',
     gender: 'Female',
     qualification: 'M.A. English Literature (Delhi University), B.Ed, CTET Qualified',
@@ -714,7 +714,7 @@ export const MOCK_TUTORS: Tutor[] = [
   },
   {
     id: 'tut-004',
-    name: 'Vikramaditya Patil',
+    name: 'Verified Teacher #004',
     photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400',
     gender: 'Male',
     qualification: 'M.Sc. Chemistry, CSIR NET Qualified (Pune University)',
@@ -741,7 +741,7 @@ export const MOCK_TUTORS: Tutor[] = [
   },
   {
     id: 'tut-005',
-    name: 'Pooja Nair',
+    name: 'Verified Teacher #005',
     photoUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400',
     gender: 'Female',
     qualification: 'M.Com, Chartered Accountant (Inter), B.Ed',
@@ -768,7 +768,7 @@ export const MOCK_TUTORS: Tutor[] = [
   },
   {
     id: 'tut-006',
-    name: 'Amitabh Sen',
+    name: 'Verified Teacher #006',
     photoUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400',
     gender: 'Male',
     qualification: 'B.Sc. (Hons) Mathematics, B.Ed (Calcutta University)',
@@ -795,7 +795,7 @@ export const MOCK_TUTORS: Tutor[] = [
   },
   {
     id: 'tut-007',
-    name: 'Meera Chordia',
+    name: 'Verified Teacher #007',
     photoUrl: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=400',
     gender: 'Female',
     qualification: 'M.Sc. Zoology, B.Ed (Gold Medalist)',
@@ -822,7 +822,7 @@ export const MOCK_TUTORS: Tutor[] = [
   },
   {
     id: 'tut-008',
-    name: 'Kavita Joshi',
+    name: 'Verified Teacher #008',
     photoUrl: 'https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?auto=format&fit=crop&q=80&w=400',
     gender: 'Female',
     qualification: 'B.Ed, Early Childhood & Primary Education Certified',
@@ -849,7 +849,7 @@ export const MOCK_TUTORS: Tutor[] = [
   },
   {
     id: 'tut-009',
-    name: 'Siddharth Iyer',
+    name: 'Verified Teacher #009',
     photoUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=400',
     gender: 'Male',
     qualification: 'B.Tech Computer Science (VJTI), Full Stack Engineer',
@@ -876,7 +876,7 @@ export const MOCK_TUTORS: Tutor[] = [
   },
   {
     id: 'tut-010',
-    name: 'Sunil Rao',
+    name: 'Verified Teacher #010',
     photoUrl: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&q=80&w=400',
     gender: 'Male',
     qualification: 'M.A. History & Political Science, B.Ed (Symbiosis Pune)',

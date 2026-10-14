@@ -7,6 +7,7 @@ interface FooterProps {
   onScrollToFaq: () => void;
   onOpenPrivacy: () => void;
   onOpenTerms: () => void;
+  onOpenAbout: () => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({
@@ -15,6 +16,7 @@ export const Footer: React.FC<FooterProps> = ({
   onScrollToFaq,
   onOpenPrivacy,
   onOpenTerms,
+  onOpenAbout,
 }) => {
   return (
     <footer className="bg-slate-900 text-slate-300 pt-14 pb-10 border-t border-slate-800">
@@ -37,8 +39,15 @@ export const Footer: React.FC<FooterProps> = ({
 
             <div className="text-xs text-slate-400 space-y-1.5 pt-1">
               <div className="flex items-center gap-2">
-                <Phone className="w-3.5 h-3.5 text-indigo-400" />
-                <span>Student & Parent Helpline: +91 98200 84721</span>
+                <Phone className="w-3.5 h-3.5 text-emerald-400" />
+                <a
+                  href="https://wa.me/919112768872"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-emerald-300 transition-colors cursor-pointer"
+                >
+                  Student & Parent Helpline / WhatsApp: +91 91127 68872
+                </a>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-3.5 h-3.5 text-indigo-400" />
@@ -120,6 +129,14 @@ export const Footer: React.FC<FooterProps> = ({
               For Tutors & Parents
             </h4>
             <ul className="space-y-2 text-xs text-slate-400">
+              <li>
+                <button
+                  onClick={onOpenAbout}
+                  className="hover:text-amber-400 text-white font-medium transition-colors cursor-pointer"
+                >
+                  About ARsolution
+                </button>
+              </li>
               <li>
                 <button
                   onClick={onJoinTeacherClick}

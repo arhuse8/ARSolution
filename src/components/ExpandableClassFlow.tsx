@@ -16,10 +16,22 @@ import {
   Coins,
   Send,
   Clock,
+  MessageCircle,
+  ExternalLink,
+  Copy,
+  Zap,
 } from 'lucide-react';
 import { BoardId, SubjectOption } from '../types';
 import { SUPPORTED_BOARDS, getSubjectsForClassAndBoard } from '../data/mockData';
 import { useTheme } from '../context/ThemeContext';
+import {
+  buildParentWhatsAppMessage,
+  getWhatsAppUrl,
+  sendToWhatsApp,
+  copyToClipboard,
+  COORDINATOR_DISPLAY_PHONE,
+  COORDINATOR_PHONE_RAW,
+} from '../utils/whatsapp';
 
 interface ExpandableClassFlowProps {
   selectedClass: number;
@@ -83,6 +95,9 @@ export const ExpandableClassFlow: React.FC<ExpandableClassFlowProps> = ({
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submittedData, setSubmittedData] = useState<any>(null);
   const [formError, setFormError] = useState<string | null>(null);
+  const [inlineWhatsappMsg, setInlineWhatsappMsg] = useState('');
+  const [copiedInline, setCopiedInline] = useState(false);
+  const [showInlinePreview, setShowInlinePreview] = useState(false);
 
   const selectedBoardConfig = SUPPORTED_BOARDS.find((b) => b.id === selectedBoard);
   const isBoardSupported = selectedBoardConfig?.isSupported ?? false;
@@ -108,20 +123,45 @@ export const ExpandableClassFlow: React.FC<ExpandableClassFlowProps> = ({
     }
 
     setIsSubmitting(true);
-    try {
-      const payload = {
-        studentClass: selectedClass,
-        board: boardName,
-        subjects: selectedSubjects.length > 0 ? selectedSubjects : ['All Core Subjects'],
-        teachingMode,
-        areaPinCode: location || 'Not specified',
-        parentName: parentName.trim(),
-        mobileNumber: cleanPhone,
-        preferredDate: parentDate,
-        expectedFees: expectedFees.trim() || 'Flexible',
-        preferredTime,
-      };
+    const generatedId = `REQ-${Math.floor(100000 + Math.random() * 900000)}`;
+    const effectiveSubjects = selectedSubjects.length > 0 ? selectedSubjects : ['All Core Subjects'];
 
+    // Build formatted message with all typed details
+    const message = buildParentWhatsAppMessage({
+      requestId: generatedId,
+      parentName: parentName.trim(),
+      mobileNumber: cleanPhone,
+      studentClass: selectedClass,
+      board: boardName,
+      subjects: effectiveSubjects,
+      teachingMode,
+      areaPinCode: location || 'Not specified',
+      preferredDate: parentDate,
+      expectedFees: expectedFees.trim() || 'Flexible',
+      preferredTime,
+    });
+
+    setInlineWhatsappMsg(message);
+
+    // Immediately open WhatsApp to send message to 9112768872
+    sendToWhatsApp(message);
+
+    const payload = {
+      id: generatedId,
+      studentClass: selectedClass,
+      board: boardName,
+      subjects: effectiveSubjects,
+      teachingMode,
+      areaPinCode: location || 'Not specified',
+      parentName: parentName.trim(),
+      mobileNumber: cleanPhone,
+      preferredDate: parentDate,
+      expectedFees: expectedFees.trim() || 'Flexible',
+      preferredTime,
+      whatsappMessage: message,
+    };
+
+    try {
       const res = await fetch('/api/request-tutor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -131,23 +171,12 @@ export const ExpandableClassFlow: React.FC<ExpandableClassFlowProps> = ({
       const data = await res.json();
       setSubmittedData({
         ...payload,
-        id: data.requestId || `REQ-${Math.floor(100000 + Math.random() * 900000)}`,
+        id: data.requestId || generatedId,
       });
       setSubmitSuccess(true);
     } catch (err) {
       // Graceful offline fallback
-      setSubmittedData({
-        studentClass: selectedClass,
-        board: boardName,
-        subjects: selectedSubjects.length > 0 ? selectedSubjects : ['All Core Subjects'],
-        teachingMode,
-        areaPinCode: location,
-        parentName: parentName.trim(),
-        mobileNumber: cleanPhone,
-        preferredDate: parentDate,
-        expectedFees: expectedFees.trim() || 'Flexible',
-        id: `REQ-${Math.floor(100000 + Math.random() * 900000)}`,
-      });
+      setSubmittedData(payload);
       setSubmitSuccess(true);
     } finally {
       setIsSubmitting(false);
@@ -694,17 +723,22 @@ export const ExpandableClassFlow: React.FC<ExpandableClassFlowProps> = ({
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full py-3 bg-gradient-to-r from-indigo-700 via-rose-600 to-orange-500 hover:opacity-95 text-white font-extrabold text-xs sm:text-sm rounded-xl shadow-rising transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                      className="w-full py-3 bg-gradient-to-r from-emerald-600 via-emerald-700 to-indigo-700 hover:opacity-95 text-white font-extrabold text-xs sm:text-sm rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                     >
                       {isSubmitting ? (
                         <span>Submitting Details...</span>
                       ) : (
                         <>
-                          <Send className="w-4 h-4" />
-                          <span>Submit Details & Get Tutor Callback</span>
+                          <MessageCircle className="w-4 h-4 fill-current" />
+                          <span>Submit & Send to WhatsApp ({COORDINATOR_PHONE_RAW})</span>
                         </>
                       )}
                     </button>
+                    <p className={`text-[10px] text-center mt-1.5 flex items-center justify-center gap-1 ${isMidnight ? 'text-slate-400' : 'text-slate-500'}`}>
+                      <MessageCircle className="w-3 h-3 text-emerald-500 inline" />
+                      <span>Direct message to WhatsApp coordinator: </span>
+                      <strong className="text-emerald-500 font-bold">{COORDINATOR_DISPLAY_PHONE}</strong>
+                    </p>
                   </div>
                 </div>
 
@@ -743,8 +777,97 @@ export const ExpandableClassFlow: React.FC<ExpandableClassFlowProps> = ({
               </span>
 
               <h4 className={`text-2xl sm:text-3xl font-black mt-2 ${isMidnight ? 'text-white' : 'text-slate-900'}`}>
-                Thank you! Our team will contact you soon.
+                Thank you! Form Submitted Successfully.
               </h4>
+
+              {/* WhatsApp Direct Action Banner */}
+              <div
+                className={`mt-4 p-4 rounded-2xl border text-left space-y-2.5 max-w-md mx-auto shadow-sm ${
+                  isMidnight
+                    ? 'bg-emerald-950/30 border-emerald-500/40 text-emerald-100'
+                    : 'bg-emerald-50 border-emerald-300 text-emerald-950'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                    <MessageCircle className="w-5 h-5 fill-current" />
+                  </div>
+                  <div>
+                    <h5 className="font-bold text-xs text-emerald-900 dark:text-emerald-200">
+                      Direct WhatsApp to {COORDINATOR_DISPLAY_PHONE}
+                    </h5>
+                    <p className="text-[11px] text-emerald-700 dark:text-emerald-400">
+                      All your typed tuition details were formatted for WhatsApp
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <a
+                    href={getWhatsAppUrl(inlineWhatsappMsg)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer active:scale-98"
+                  >
+                    <MessageCircle className="w-4 h-4 fill-current" />
+                    <span>Open WhatsApp ({COORDINATOR_PHONE_RAW})</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      const ok = await copyToClipboard(inlineWhatsappMsg);
+                      if (ok) {
+                        setCopiedInline(true);
+                        setTimeout(() => setCopiedInline(false), 2500);
+                      }
+                    }}
+                    className={`w-full py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 border transition-all cursor-pointer ${
+                      isMidnight
+                        ? 'bg-[#131B2E] hover:bg-[#1A2640] text-white border-slate-700'
+                        : 'bg-white hover:bg-slate-100 text-slate-800 border-slate-200'
+                    }`}
+                  >
+                    {copiedInline ? (
+                      <>
+                        <Check className="w-4 h-4 text-emerald-500" />
+                        <span className="text-emerald-500 font-bold">Copied! ✨</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-4 h-4 text-slate-400" />
+                        <span>Copy WhatsApp Text</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                <p className="text-[10px] text-emerald-700 dark:text-emerald-400 text-center">
+                  If WhatsApp didn't open automatically, tap <strong>Open WhatsApp</strong> or <strong>Copy Text</strong> above.
+                </p>
+              </div>
+
+              {/* Message Bubble Preview */}
+              <div
+                className={`mt-4 p-3.5 rounded-2xl border text-left text-xs space-y-1.5 max-w-md mx-auto ${
+                  isMidnight
+                    ? 'bg-[#070A13] border-slate-800 text-slate-300'
+                    : 'bg-slate-50 border-slate-200 text-slate-700'
+                }`}
+              >
+                <div className="flex items-center justify-between pb-1 border-b border-slate-200/60 dark:border-slate-800">
+                  <span className="text-[11px] font-bold text-slate-500 flex items-center gap-1">
+                    <MessageCircle className="w-3 h-3 text-emerald-500" /> Formatted Message to {COORDINATOR_PHONE_RAW}:
+                  </span>
+                  <span className="text-[10px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded font-bold">
+                    Clean Format
+                  </span>
+                </div>
+                <pre className="font-mono text-[11px] whitespace-pre-wrap leading-relaxed">
+                  {inlineWhatsappMsg}
+                </pre>
+              </div>
 
               <p className={`text-xs sm:text-sm max-w-lg mx-auto mt-2 leading-relaxed ${isMidnight ? 'text-slate-300' : 'text-slate-600'}`}>
                 We have received all your tuition details for{' '}

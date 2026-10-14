@@ -24,7 +24,42 @@ async function startServer() {
   }
 
   // In-memory request & teacher registration store (designed for future Supabase migration)
-  const tutorRequests: any[] = [];
+  const tutorRequests: any[] = [
+    {
+      id: 'REQ-918234',
+      parentName: 'Sunil Patil',
+      mobileNumber: '9820012345',
+      studentClass: 10,
+      board: 'CBSE',
+      subjects: ['Mathematics', 'Science'],
+      teachingMode: 'Home Tuition',
+      areaPinCode: 'Andheri West, Mumbai (400053)',
+      preferredDate: new Date().toISOString().split('T')[0],
+      expectedFees: '₹6,000 / month',
+      preferredTime: 'Evening (5:00 PM – 7:00 PM)',
+      additionalRequirements: 'Needs conceptual clarity in trigonometry and physics formulas.',
+      status: 'DEMO_SCHEDULED',
+      createdAt: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
+      whatsappNumber: '9112768872',
+    },
+    {
+      id: 'REQ-745192',
+      parentName: 'Anita Deshmukh',
+      mobileNumber: '9819234567',
+      studentClass: 12,
+      board: 'Maharashtra State Board',
+      subjects: ['Chemistry', 'Biology'],
+      teachingMode: 'Online Tuition',
+      areaPinCode: 'Pune / Kothrud',
+      preferredDate: new Date().toISOString().split('T')[0],
+      expectedFees: '₹8,000 / month',
+      preferredTime: 'Weekend Mornings (9 AM – 11 AM)',
+      additionalRequirements: 'HSC Board preparation + NEET concept reinforcement.',
+      status: 'PENDING_MATCH',
+      createdAt: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
+      whatsappNumber: '9112768872',
+    },
+  ];
   const teacherRegistrations: any[] = [];
 
   // API: AI Academic Planner and Tutor Matching Advisor
@@ -269,21 +304,33 @@ Respond ONLY with valid JSON, no markdown codeblocks, no surrounding text.`;
         expectedFees: expectedFees || 'Flexible / As per tutor',
         preferredTime: preferredTime || 'Evening (5 PM - 8 PM)',
         additionalRequirements: additionalRequirements || '',
+        whatsappMessage: req.body.whatsappMessage || '',
+        whatsappNumber: '9112768872',
         status: 'PENDING_MATCH',
         createdAt: new Date().toISOString(),
       };
 
-      tutorRequests.push(newRequest);
+      tutorRequests.unshift(newRequest);
 
       return res.json({
         status: 'success',
-        message: 'Your tutor request has been submitted successfully!',
+        message: 'Your tutor request has been submitted successfully and routed to WhatsApp 9112768872!',
         requestId: newRequest.id,
         data: newRequest,
       });
     } catch (err: any) {
       return res.status(500).json({ status: 'error', message: 'Failed to submit request.' });
     }
+  });
+
+  // API: Get All Tutor Requests (Coordinator Inbox / Direct Messages)
+  app.get('/api/tutor-requests', (req: Request, res: Response) => {
+    return res.json({
+      status: 'success',
+      count: tutorRequests.length,
+      coordinatorWhatsApp: '9112768872',
+      requests: tutorRequests,
+    });
   });
 
   // API: Register as Teacher Submission

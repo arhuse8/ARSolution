@@ -76,18 +76,22 @@ export const TutorProfileModal: React.FC<TutorProfileModalProps> = ({
 
         {/* Profile Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 pb-5 border-b border-slate-100">
-          <div className="relative">
+          <div className="relative shrink-0 w-22 h-22 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border-2 border-slate-100 shadow-md">
             <img
               src={tutor.photoUrl}
-              alt={tutor.name}
-              className="w-22 h-22 sm:w-24 sm:h-24 rounded-2xl object-cover border-2 border-slate-100 shadow-md"
+              alt="Teacher photo (blurred for privacy)"
+              className="w-full h-full object-cover filter blur-md scale-125 select-none pointer-events-none"
             />
+            <div className="absolute inset-0 bg-black/15 pointer-events-none" />
+            <div className="absolute bottom-1 left-1 right-1 text-center bg-black/60 backdrop-blur-xs text-[9px] text-white/90 px-1 py-0.5 rounded font-medium pointer-events-none">
+              Photo Blurred
+            </div>
             {tutor.verified && (
               <div
-                className="absolute -bottom-1 -right-1 bg-emerald-500 text-white p-1.5 rounded-full shadow-sm"
+                className="absolute top-1 right-1 bg-emerald-500 text-white p-1 rounded-full shadow-xs"
                 title="100% Background & Degree Verified"
               >
-                <ShieldCheck className="w-4 h-4 stroke-[2.5]" />
+                <ShieldCheck className="w-3.5 h-3.5 stroke-[2.5]" />
               </div>
             )}
           </div>
@@ -104,9 +108,14 @@ export const TutorProfileModal: React.FC<TutorProfileModalProps> = ({
               </div>
             </div>
 
-            <h3 id="tutor-profile-title" className="text-xl sm:text-2xl font-extrabold text-slate-900 mt-1">
-              {tutor.name}
-            </h3>
+            <div className="flex flex-wrap items-center gap-2 mt-1">
+              <h3 id="tutor-profile-title" className="text-xl sm:text-2xl font-extrabold text-slate-900">
+                Verified Teacher #{tutor.id.replace('tut-', '')}
+              </h3>
+              <span className="text-xs font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200">
+                Name Hidden for Privacy
+              </span>
+            </div>
 
             <p className="text-sm font-semibold text-slate-700 mt-0.5">
               {tutor.qualification}

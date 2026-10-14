@@ -1,6 +1,6 @@
-import React from 'react';
-import { ArrowDown, CheckCircle, ShieldCheck, Sparkles, Users, Award, Star, Flame } from 'lucide-react';
+import { ArrowDown, CheckCircle, ShieldCheck, Sparkles, Users, Award, Star, Flame, MessageCircle, Zap } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import { COORDINATOR_DISPLAY_PHONE, COORDINATOR_PHONE_RAW } from '../utils/whatsapp';
 
 interface HeroSectionProps {
   onExploreClassesClick: () => void;
@@ -64,18 +64,28 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             </p>
 
             {/* Simplified, High-Contrast Actions */}
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-2">
+            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-2">
               <button
                 onClick={onExploreClassesClick}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-gradient-to-r from-indigo-700 via-rose-600 to-orange-500 hover:opacity-95 text-white font-extrabold text-sm sm:text-base px-7 py-3.5 rounded-2xl shadow-rising hover:shadow-rising-hover transition-all duration-200 cursor-pointer active:scale-98"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-gradient-to-r from-indigo-700 via-rose-600 to-orange-500 hover:opacity-95 text-white font-extrabold text-sm sm:text-base px-6 py-3.5 rounded-2xl shadow-rising hover:shadow-rising-hover transition-all duration-200 cursor-pointer active:scale-98"
               >
                 <span>Explore Classes</span>
                 <ArrowDown className="w-4 h-4 animate-bounce" />
               </button>
 
+              <a
+                href={`https://wa.me/91${COORDINATOR_PHONE_RAW}?text=Hi%20ARsolution!%20I%20am%20looking%20for%20a%20verified%20tutor%20for%20my%20child.`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 font-extrabold text-sm sm:text-base px-6 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white shadow-md hover:shadow-emerald-500/25 transition-all duration-200 cursor-pointer active:scale-98"
+              >
+                <MessageCircle className="w-4 h-4 fill-current" />
+                <span>WhatsApp ({COORDINATOR_PHONE_RAW})</span>
+              </a>
+
               <button
                 onClick={onJoinTeacherClick}
-                className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 font-bold text-sm sm:text-base px-6 py-3.5 rounded-2xl border transition-all duration-200 cursor-pointer shadow-xs ${
+                className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 font-bold text-sm sm:text-base px-5 py-3.5 rounded-2xl border transition-all duration-200 cursor-pointer shadow-xs ${
                   isMidnight
                     ? 'bg-[#0F172A] hover:bg-[#162036] text-white border-slate-700 hover:border-amber-400'
                     : 'bg-white hover:bg-slate-50 text-slate-800 border-slate-200 hover:border-orange-300'
