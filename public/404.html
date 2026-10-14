@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AR Solution Home Tutor</title>
+    <script type="text/javascript">
+      // GitHub Pages SPA router fallback: redirect 404s back to root index
+      (function() {
+        var l = window.location;
+        l.replace(
+          l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+          l.pathname.split('/').slice(0, 1 + (l.pathname.startsWith('/') && l.pathname.split('/')[1] ? 1 : 0)).join('/') + '/?p=' +
+          encodeURIComponent(l.pathname.slice(1)) + (l.search ? '&q=' + encodeURIComponent(l.search.slice(1)) : '') +
+          l.hash
+        );
+      })();
+    </script>
+  </head>
+  <body style="font-family: sans-serif; text-align: center; padding: 50px;">
+    <h2>Redirecting to AR Solution Home Tutor...</h2>
+    <p><a href="./">Click here if you are not redirected automatically.</a></p>
+  </body>
+</html>

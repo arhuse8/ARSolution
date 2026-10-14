@@ -21,6 +21,8 @@ import {
   getWhatsAppUrl,
   copyToClipboard,
   buildParentWhatsAppMessage,
+  getLocalParentSubmissions,
+  saveParentSubmission,
 } from '../utils/whatsapp';
 import { useTheme } from '../context/ThemeContext';
 
@@ -41,14 +43,29 @@ export const CoordinatorInboxModal: React.FC<CoordinatorInboxModalProps> = ({
 
   const fetchRequests = async () => {
     setLoading(true);
+    // 1. Instantly load local submissions (works on GitHub Pages / offline / serverless)
+    const local = getLocalParentSubmissions();
+    setRequests(local);
+
+    // 2. Attempt fetching from backend server if running
     try {
       const res = await fetch('/api/tutor-requests');
-      const data = await res.json();
-      if (data.status === 'success' && Array.isArray(data.requests)) {
-        setRequests(data.requests);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.status === 'success' && Array.isArray(data.requests)) {
+          // Merge server requests with local requests avoiding duplicates by ID
+          const combined = [...data.requests];
+          local.forEach((locItem) => {
+            if (!combined.some((srv) => srv.id === locItem.id)) {
+              combined.unshift(locItem);
+            }
+          });
+          setRequests(combined);
+        }
       }
-    } catch (err) {
-      console.warn('Failed to fetch tutor requests:', err);
+    } catch {
+      // In static hosting environments like GitHub Pages, seamlessly fallback to local records
+      setRequests(local);
     } finally {
       setLoading(false);
     }

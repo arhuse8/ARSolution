@@ -24,6 +24,7 @@ import {
   getWhatsAppUrl,
   sendToWhatsApp,
   copyToClipboard,
+  saveParentSubmission,
   COORDINATOR_DISPLAY_PHONE,
   COORDINATOR_PHONE_RAW,
 } from '../utils/whatsapp';
@@ -164,6 +165,26 @@ export const TutorRequestModal: React.FC<TutorRequestModalProps> = ({
 
     setWhatsappMsg(message);
 
+    // Save locally so coordinator inbox always shows direct messages on GitHub Pages and serverless deploys
+    saveParentSubmission({
+      id: generatedId,
+      parentName: formData.parentName,
+      mobileNumber: formData.mobileNumber,
+      studentClass: formData.studentClass,
+      board: formData.board,
+      subjects: formData.subjects,
+      teachingMode: formData.teachingMode,
+      areaPinCode: formData.areaPinCode,
+      preferredDate: formData.preferredDate,
+      expectedFees: formData.expectedFees,
+      preferredTime: formData.preferredTime,
+      additionalRequirements: formData.additionalRequirements,
+      whatsappMessage: message,
+      whatsappNumber: '9112768872',
+      status: 'DEMO_SCHEDULED',
+      createdAt: new Date().toISOString(),
+    });
+
     // Immediately trigger WhatsApp direct message to 9112768872
     sendToWhatsApp(message);
 
@@ -174,10 +195,15 @@ export const TutorRequestModal: React.FC<TutorRequestModalProps> = ({
         body: JSON.stringify({ ...formData, requestId: generatedId, whatsappMessage: message }),
       });
 
-      const data = await res.json();
-      const reqId = data.requestId || generatedId;
-      setSubmittedId(reqId);
-      onSuccess(reqId);
+      if (res.ok) {
+        const data = await res.json();
+        const reqId = data.requestId || generatedId;
+        setSubmittedId(reqId);
+        onSuccess(reqId);
+      } else {
+        setSubmittedId(generatedId);
+        onSuccess(generatedId);
+      }
     } catch {
       setSubmittedId(generatedId);
       onSuccess(generatedId);

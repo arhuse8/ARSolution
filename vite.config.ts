@@ -1,18 +1,21 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
-import {defineConfig} from 'vite';
+import { defineConfig } from 'vite';
 
-export default defineConfig(({ command }) => {
-  // Use '/ARSolution/' when building for GitHub Pages, and '/' for local dev / preview
-  const base = command === 'build' ? (process.env.VITE_BASE_PATH || '/ARSolution/') : '/';
+export default defineConfig(() => {
+  // Use relative base './' so the build works everywhere:
+  // - Any GitHub Pages repo URL (e.g. https://username.github.io/repo-name/)
+  // - Custom domain or root domain (e.g. https://username.github.io/)
+  // - Local preview or direct file opening
+  const base = process.env.VITE_BASE_PATH || './';
 
   return {
     base,
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, '.'),
+        '@': path.resolve('.'),
       },
     },
     server: {

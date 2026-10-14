@@ -29,6 +29,7 @@ import {
   getWhatsAppUrl,
   sendToWhatsApp,
   copyToClipboard,
+  saveParentSubmission,
   COORDINATOR_DISPLAY_PHONE,
   COORDINATOR_PHONE_RAW,
 } from '../utils/whatsapp';
@@ -159,7 +160,13 @@ export const ExpandableClassFlow: React.FC<ExpandableClassFlowProps> = ({
       expectedFees: expectedFees.trim() || 'Flexible',
       preferredTime,
       whatsappMessage: message,
+      status: 'DEMO_SCHEDULED',
+      createdAt: new Date().toISOString(),
+      whatsappNumber: '9112768872',
     };
+
+    // Save locally so coordinator inbox always displays the message on GitHub Pages
+    saveParentSubmission(payload);
 
     try {
       const res = await fetch('/api/request-tutor', {
@@ -168,11 +175,15 @@ export const ExpandableClassFlow: React.FC<ExpandableClassFlowProps> = ({
         body: JSON.stringify(payload),
       });
 
-      const data = await res.json();
-      setSubmittedData({
-        ...payload,
-        id: data.requestId || generatedId,
-      });
+      if (res.ok) {
+        const data = await res.json();
+        setSubmittedData({
+          ...payload,
+          id: data.requestId || generatedId,
+        });
+      } else {
+        setSubmittedData(payload);
+      }
       setSubmitSuccess(true);
     } catch (err) {
       // Graceful offline fallback

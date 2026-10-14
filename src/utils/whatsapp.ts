@@ -147,3 +147,74 @@ export async function copyToClipboard(text: string): Promise<boolean> {
     return false;
   }
 }
+
+const STORAGE_KEY = 'arsolution_parent_submissions';
+
+export const INITIAL_SAMPLE_REQUESTS = [
+  {
+    id: 'REQ-918234',
+    parentName: 'Sunil Patil',
+    mobileNumber: '9820012345',
+    studentClass: 10,
+    board: 'CBSE',
+    subjects: ['Mathematics', 'Science'],
+    teachingMode: 'Home Tuition',
+    areaPinCode: 'Andheri West, Mumbai (400053)',
+    preferredDate: new Date().toISOString().split('T')[0],
+    expectedFees: '₹6,000 / month',
+    preferredTime: 'Evening (5:00 PM – 7:00 PM)',
+    additionalRequirements: 'Needs conceptual clarity in trigonometry and physics formulas.',
+    status: 'DEMO_SCHEDULED',
+    createdAt: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
+    whatsappNumber: '9112768872',
+  },
+  {
+    id: 'REQ-745192',
+    parentName: 'Anita Deshmukh',
+    mobileNumber: '9819234567',
+    studentClass: 12,
+    board: 'Maharashtra State Board',
+    subjects: ['Chemistry', 'Biology'],
+    teachingMode: 'Online Tuition',
+    areaPinCode: 'Pune / Kothrud',
+    preferredDate: new Date().toISOString().split('T')[0],
+    expectedFees: '₹8,000 / month',
+    preferredTime: 'Weekend Mornings (9 AM – 11 AM)',
+    additionalRequirements: 'HSC Board preparation + NEET concept reinforcement.',
+    status: 'PENDING_MATCH',
+    createdAt: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
+    whatsappNumber: '9112768872',
+  },
+];
+
+/**
+ * Save parent submission to localStorage so it is always visible in the Coordinator Inbox / Direct Messages,
+ * even when hosted as a static site on GitHub Pages without an active backend.
+ */
+export function saveParentSubmission(submission: any): void {
+  try {
+    const list = getLocalParentSubmissions();
+    const updated = [submission, ...list.filter((item: any) => item.id !== submission.id)];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+  } catch (err) {
+    console.warn('Failed to save submission to localStorage:', err);
+  }
+}
+
+/**
+ * Retrieves parent submissions from localStorage, falling back to initial verified requests.
+ */
+export function getLocalParentSubmissions(): any[] {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (err) {
+    console.warn('Failed to read submissions from localStorage:', err);
+  }
+  return INITIAL_SAMPLE_REQUESTS;
+}
