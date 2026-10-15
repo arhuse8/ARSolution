@@ -2,59 +2,65 @@
 
 A modern, high-energy web application for **AR Solution Home Tutor** connecting parents and students across Classes 1–12 (CBSE, ICSE, Maharashtra State Board) with verified 1-on-1 home and online tutors.
 
-Direct WhatsApp Coordinator Routing: **+91 91127 68872** (`9112768872`)
+Direct WhatsApp Coordinator Helpline: **+91 91127 68872** (`9112768872`)
 
 ---
 
-## 🚀 How to Host on GitHub Pages (Fixed: Website Now Opens Cleanly)
+## 📱 Why the Website Did Not Open on Mobile
 
-### Why the site wasn't opening before:
-The previous Vite build had a hardcoded base path (`/ARSolution/`). If your GitHub repository had a different name (e.g. `ar-solution`, `home-tutor`, or `<username>.github.io`), the browser failed to locate JavaScript and CSS bundles with `404 Not Found`, showing a blank page.
-
-### The Fix Applied:
-1. **Relative Base Path (`base: './'`)**: The project now builds using relative asset links (`./assets/...`). It works automatically on **any GitHub repository name**, custom domain, or local folder without manual changes.
-2. **GitHub Pages Routing Fallback (`404.html`)**: Added SPA fallback in `public/404.html` so refreshing or direct links won't result in 404 errors.
-3. **Jekyll Bypass (`.nojekyll`)**: Added `.nojekyll` to prevent GitHub from ignoring Vite bundles.
-4. **Offline / Static Direct Message Inbox**: Parent submissions to WhatsApp are automatically stored in `localStorage`, meaning the Coordinator Inbox displays all direct messages even on static GitHub Pages hosting.
+When hosting from GitHub:
+1. **GitHub Pages defaults to serving the uncompiled root folder**:
+   If GitHub Pages is set to `main` branch with `/ (root)`, it serves `index.html` pointing to `<script type="module" src="/src/main.tsx"></script>`. Mobile browsers (Safari on iPhone, Chrome on Android) **cannot execute raw `.tsx` TypeScript files** and will show a blank white screen.
+2. **Missing trailing slash on mobile**:
+   When mobile users open `https://arhuse8.github.io/ARSolution` (without the trailing `/`), relative assets fail to resolve. We added an automatic URL normalizer to instantly fix this.
+3. **Restricted mobile WebViews / Private Browsing**:
+   We added safe wrappers around `localStorage` and `matchMedia`, plus an `ErrorBoundary` with a direct "Contact Coordinator on WhatsApp" fallback.
 
 ---
 
-## 📦 Steps to Deploy to GitHub Pages
+## 🚀 How to Make It Open on Mobile (Choose ANY 1 of 3 Options)
 
-### Option 1: Automatic Deployment with GitHub Actions (Recommended)
-This repository includes a ready-to-run GitHub Actions workflow in `.github/workflows/deploy.yml`.
+### 🥇 Option 1: Set Folder to `/docs` (Easiest - 10 Seconds)
+The compiled production bundle is already built and committed into the `docs/` folder of this repository.
 
-1. **Push your code to GitHub**:
+1. Open your repository on GitHub: `https://github.com/arhuse8/ARSolution`
+2. Click **Settings** (top tab) ⚙️
+3. In the left menu, click **Pages** 📄
+4. Under **Build and deployment**:
+   - **Source**: Select **"Deploy from a branch"**
+   - **Branch**: Select **`main`** (or `master`)
+   - **Folder**: Change from `/ (root)` to **`/docs`**
+5. Click **Save**.
+6. Wait 30–60 seconds, then open on your mobile phone:
+   👉 **`https://arhuse8.github.io/ARSolution/`**
+   The website will open immediately with full styling, mobile menus, and 1-tap WhatsApp connectivity!
+
+---
+
+### 🥈 Option 2: Switch to "GitHub Actions" (Automated)
+Your repository has the pre-configured workflow `.github/workflows/deploy.yml`:
+
+1. Open `https://github.com/arhuse8/ARSolution`
+2. Click **Settings** > **Pages**
+3. Under **Build and deployment** > **Source**, change from **"Deploy from a branch"** to **"GitHub Actions"**
+4. GitHub Actions will automatically run `npm run build` and publish the site.
+
+---
+
+### 🥉 Option 3: Deploy via Terminal (`npm run deploy`)
+1. In your local terminal, run:
    ```bash
-   git add .
-   git commit -m "Configure GitHub Pages with relative base and WhatsApp direct messaging"
-   git branch -M main
-   git remote add origin https://github.com/<your-username>/<your-repo-name>.git
-   git push -u origin main
+   npm run deploy
    ```
-2. **Enable GitHub Pages in your Repository Settings**:
-   - Go to your GitHub repository -> **Settings** -> **Pages** (on the left sidebar).
-   - Under **Build and deployment** > **Source**, choose **GitHub Actions**.
-   - Your site will automatically build and publish! The live URL will be shown (e.g. `https://<your-username>.github.io/<your-repo-name>/`).
+2. In GitHub repository **Settings** > **Pages**, set **Branch** to **`gh-pages`** and folder to **`/ (root)`**, then click **Save**.
 
 ---
 
-### Option 2: Deploy Built `dist` Folder Directly (gh-pages)
-If you prefer deploying the built files directly:
+## 🛠️ Mobile Improvements Included in this Build
 
-1. **Build the production bundle**:
-   ```bash
-   npm run build
-   ```
-2. The production files are generated in `./dist` (including `index.html`, `404.html`, and `.nojekyll`).
-3. You can push the `./dist` folder to a `gh-pages` branch or upload it directly. Under repository **Settings** -> **Pages**, set **Source** to **Deploy from a branch** and select `gh-pages` / `/ (root)`.
-
----
-
-## ⚡ Key Features
-
-- **Direct WhatsApp Routing (9112768872)**: When parents submit the booking form or click any demo action, WhatsApp opens immediately with pre-filled, cleanly formatted details (Student Name, Mobile Number, Class, Board, Subjects, Mode, Location, Expected Fees, Preferred Time, Special Notes).
-- **Coordinator Inbox & Direct Messages**: An in-app inbox displaying all submitted student requests with search, filter, and 1-tap message copying.
-- **Gen Z Aesthetics & UX**: Sleek glassmorphism cards, category chips (Primary, Middle, Boards, Senior), and responsive Dawn / Midnight theme toggle.
-- **AI Academic Planner**: Personalized syllabi, weekly roadmaps, and board exam tips powered by curriculum benchmarks.
-- **Teacher Verification System**: Safe ID badge protection for verified educators.
+- **Compiled `/docs` folder**: Static HTML, CSS, and JS ready for instant GitHub Pages serving without build tools.
+- **Auto-Trailing Slash Redirect**: Visiting `arhuse8.github.io/ARSolution` automatically normalizes to `arhuse8.github.io/ARSolution/` so assets load seamlessly on mobile.
+- **Mobile Popup Safe WhatsApp Launcher**: Directly launches the native WhatsApp app on Android & iOS without popup blockers or blank windows.
+- **Narrow Screen Adaptation**: Responsive Floating WhatsApp Widget fits smoothly on all devices down to 320px screens.
+- **Client-Side Error Boundary**: Catches any browser incompatibilities and offers an instant reload button and WhatsApp coordinator helpline (+91 91127 68872).
+- **LocalStorage Direct Message Inbox**: Parent booking submissions are stored locally and accessible in the Coordinator Inbox on static GitHub Pages.

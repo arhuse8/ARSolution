@@ -24,7 +24,7 @@ export const FloatingWhatsAppWidget: React.FC<FloatingWhatsAppWidgetProps> = ({
     <div className="fixed bottom-5 right-5 z-40 flex flex-col items-end">
       {/* Expanded Quick Chat Popover */}
       {isOpen && (
-        <div className="mb-3 w-80 sm:w-88 rounded-3xl bg-white dark:bg-[#0F172A] border border-emerald-500/30 shadow-2xl overflow-hidden animate-scale-up text-slate-900 dark:text-white">
+        <div className="mb-3 w-[calc(100vw-2.5rem)] max-w-sm sm:w-88 max-h-[85vh] flex flex-col rounded-3xl bg-white dark:bg-[#0F172A] border border-emerald-500/30 shadow-2xl overflow-hidden animate-scale-up text-slate-900 dark:text-white">
           {/* Header */}
           <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-700 p-4 text-white relative">
             <button
@@ -55,7 +55,7 @@ export const FloatingWhatsAppWidget: React.FC<FloatingWhatsAppWidgetProps> = ({
           </div>
 
           {/* Body */}
-          <div className="p-4 space-y-3 text-xs bg-slate-50 dark:bg-[#131B2E]">
+          <div className="p-4 space-y-3 text-xs bg-slate-50 dark:bg-[#131B2E] overflow-y-auto">
             {/* Mock message bubble */}
             <div className="p-3 rounded-2xl rounded-tl-xs bg-white dark:bg-[#1E293B] border border-slate-200 dark:border-slate-700/60 shadow-xs space-y-1">
               <p className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-1">

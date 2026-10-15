@@ -99,23 +99,28 @@ export function getWaMeUrl(message: string): string {
 export function sendToWhatsApp(message: string): boolean {
   const url = getWhatsAppUrl(message);
   try {
-    // 1. Create a real DOM anchor element with target="_blank" (immune to some popup blockers)
-    const a = document.createElement('a');
-    a.href = url;
-    a.target = '_blank';
-    a.rel = 'noopener noreferrer';
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => {
-      try {
-        document.body.removeChild(a);
-      } catch {}
-    }, 400);
+    const isMobile =
+      typeof navigator !== 'undefined' &&
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-    // 2. Also attempt window.open
-    const openedWindow = window.open(url, '_blank', 'noopener,noreferrer');
-    if (openedWindow && !openedWindow.closed && typeof openedWindow.closed !== 'undefined') {
+    if (isMobile) {
+      window.location.href = url;
       return true;
+    }
+
+    const openedWindow = window.open(url, '_blank', 'noopener,noreferrer');
+    if (!openedWindow) {
+      const a = document.createElement('a');
+      a.href = url;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        try {
+          document.body.removeChild(a);
+        } catch {}
+      }, 400);
     }
     return true;
   } catch (err) {

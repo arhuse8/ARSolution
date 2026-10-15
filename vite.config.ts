@@ -4,11 +4,9 @@ import path from 'path';
 import { defineConfig } from 'vite';
 
 export default defineConfig(() => {
-  // Use relative base './' so the build works everywhere:
-  // - Any GitHub Pages repo URL (e.g. https://username.github.io/repo-name/)
-  // - Custom domain or root domain (e.g. https://username.github.io/)
-  // - Local preview or direct file opening
-  const base = process.env.VITE_BASE_PATH || './';
+  // Automatically detect GitHub Pages repository in GitHub Actions or fallback to relative base
+  const repoName = process.env.GITHUB_REPOSITORY ? `/${process.env.GITHUB_REPOSITORY.split('/')[1]}/` : null;
+  const base = process.env.VITE_BASE_PATH || repoName || './';
 
   return {
     base,

@@ -3,7 +3,20 @@
   <head>
     <meta charset="UTF-8" />
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+
+    <!-- Normalization for GitHub Pages on mobile browsers: ensures trailing slash for correct relative asset loading -->
+    <script>
+      (function() {
+        if (window.location.hostname.endsWith('github.io')) {
+          var p = window.location.pathname;
+          var parts = p.split('/').filter(Boolean);
+          if (parts.length === 1 && !p.endsWith('/')) {
+            window.location.replace(p + '/' + window.location.search + window.location.hash);
+          }
+        }
+      })();
+    </script>
 
     <title>
       AR Solution Home Tutor - Find the Right Tutor for Your Child
@@ -38,7 +51,8 @@
 
     <meta name="twitter:card" content="summary_large_image" />
 
-    <link rel="icon" href="./favicon.ico" sizes="any" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="alternate icon" href="./favicon.ico" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
 
@@ -58,6 +72,22 @@
     class="bg-[#F8FAFC] text-[#0F172A] antialiased selection:bg-indigo-100 selection:text-indigo-900 font-['Plus_Jakarta_Sans',sans-serif]"
   >
     <div id="root"></div>
+
+    <!-- Fallback if repository root is served on GitHub Pages without Vite build step -->
+    <script>
+      (function() {
+        if (window.location.hostname.endsWith('github.io')) {
+          var isDev = window.location.port === '3000' || window.location.port === '5173';
+          var isRawTsx = document.querySelector('script[src*="/src/main.tsx"]');
+          if (!isDev && isRawTsx) {
+            var curr = window.location.pathname.endsWith('/') ? window.location.pathname : window.location.pathname + '/';
+            if (!curr.includes('/docs/')) {
+              window.location.replace(curr + 'docs/' + window.location.search + window.location.hash);
+            }
+          }
+        }
+      })();
+    </script>
 
     <!-- React application entry point -->
     <script type="module" src="/src/main.tsx"></script>

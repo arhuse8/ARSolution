@@ -13,16 +13,32 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<ThemeMode>(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('ar_solution_theme') as ThemeMode;
-      if (saved === 'midnight' || saved === 'dawn') return saved;
-      // Default to dawn mode or check system preference
-      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'midnight' : 'dawn';
+      try {
+        const saved = window.localStorage ? (localStorage.getItem('ar_solution_theme') as ThemeMode) : null;
+        if (saved === 'midnight' || saved === 'dawn') return saved;
+        // Default to dawn mode or check system preference safely
+        if (typeof window.matchMedia === 'function') {
+          const mq = window.matchMedia('(prefers-color-scheme: dark)');
+          if (mq && typeof mq.matches === 'boolean') {
+            return mq.matches ? 'midnight' : 'dawn';
+          }
+        }
+      } catch (e) {
+        // Safe fallback for mobile private browsing or webviews
+        return 'dawn';
+      }
     }
     return 'dawn';
   });
 
   useEffect(() => {
-    localStorage.setItem('ar_solution_theme', theme);
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        localStorage.setItem('ar_solution_theme', theme);
+      }
+    } catch (e) {
+      // Ignore storage errors on private mobile browsing
+    }
     const root = document.documentElement;
     if (theme === 'midnight') {
       root.classList.add('midnight', 'dark');
