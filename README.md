@@ -6,61 +6,39 @@ Direct WhatsApp Coordinator Helpline: **+91 91127 68872** (`9112768872`)
 
 ---
 
-## 📱 Why the Website Did Not Open on Mobile
+## 📱 Fix for "Blank Page When Open" on GitHub Pages
 
-When hosting from GitHub:
-1. **GitHub Pages defaults to serving the uncompiled root folder**:
-   If GitHub Pages is set to `main` branch with `/ (root)`, it serves `index.html` pointing to `<script type="module" src="/src/main.tsx"></script>`. Mobile browsers (Safari on iPhone, Chrome on Android) **cannot execute raw `.tsx` TypeScript files** and will show a blank white screen.
-2. **Missing trailing slash on mobile**:
-   When mobile users open `https://arhuse8.github.io/ARSolution` (without the trailing `/`), relative assets fail to resolve. We added an automatic URL normalizer to instantly fix this.
-3. **Restricted mobile WebViews / Private Browsing**:
-   We added safe wrappers around `localStorage` and `matchMedia`, plus an `ErrorBoundary` with a direct "Contact Coordinator on WhatsApp" fallback.
+When you open `https://arhuse8.github.io/ARSolution/` and see a **blank page**, it is because GitHub Pages is currently configured to publish from **`/(root)`** instead of the built bundle. The root contains raw uncompiled files (`src/main.tsx`), which mobile & desktop browsers cannot execute directly.
 
----
+### ⚡ Fix in 10 Seconds (Recommended):
 
-## 🚀 How to Make It Open on Mobile (Choose ANY 1 of 3 Options)
+1. Go to your repository settings on GitHub:  
+   👉 **https://github.com/arhuse8/ARSolution/settings/pages**
+2. Under **"Build and deployment"**:
+   - Keep **Source**: `Deploy from a branch`
+   - Under **Branch**: Select **`main`** and change the folder dropdown from **`/(root)`** to **`/docs`**
+   - Click **Save**
+3. Wait 30 seconds, then open:  
+   👉 **https://arhuse8.github.io/ARSolution/**
 
-### 🥇 Option 1: Set Folder to `/docs` (Easiest - 10 Seconds)
-The compiled production bundle is already built and committed into the `docs/` folder of this repository.
-
-1. Open your repository on GitHub: `https://github.com/arhuse8/ARSolution`
-2. Click **Settings** (top tab) ⚙️
-3. In the left menu, click **Pages** 📄
-4. Under **Build and deployment**:
-   - **Source**: Select **"Deploy from a branch"**
-   - **Branch**: Select **`main`** (or `master`)
-   - **Folder**: Change from `/ (root)` to **`/docs`**
-5. Click **Save**.
-6. Wait 30–60 seconds, then open on your mobile phone:
-   👉 **`https://arhuse8.github.io/ARSolution/`**
-   The website will open immediately with full styling, mobile menus, and 1-tap WhatsApp connectivity!
+Your website will load immediately with all styling, class cards, teacher registration, and WhatsApp chat!
 
 ---
 
-### 🥈 Option 2: Switch to "GitHub Actions" (Automated)
-Your repository has the pre-configured workflow `.github/workflows/deploy.yml`:
+### Alternative Fix: Use GitHub Actions
 
-1. Open `https://github.com/arhuse8/ARSolution`
-2. Click **Settings** > **Pages**
-3. Under **Build and deployment** > **Source**, change from **"Deploy from a branch"** to **"GitHub Actions"**
-4. GitHub Actions will automatically run `npm run build` and publish the site.
-
----
-
-### 🥉 Option 3: Deploy via Terminal (`npm run deploy`)
-1. In your local terminal, run:
-   ```bash
-   npm run deploy
-   ```
-2. In GitHub repository **Settings** > **Pages**, set **Branch** to **`gh-pages`** and folder to **`/ (root)`**, then click **Save**.
+1. Go to **https://github.com/arhuse8/ARSolution/settings/pages**
+2. Under **"Build and deployment"** -> **"Source"**:
+   - Select **GitHub Actions**
+3. Go to the **Actions** tab (`https://github.com/arhuse8/ARSolution/actions`), click **Deploy to GitHub Pages** on the left, and click **Run workflow**.
 
 ---
 
-## 🛠️ Mobile Improvements Included in this Build
+## 🛠️ Local Development & Build Commands
 
-- **Compiled `/docs` folder**: Static HTML, CSS, and JS ready for instant GitHub Pages serving without build tools.
-- **Auto-Trailing Slash Redirect**: Visiting `arhuse8.github.io/ARSolution` automatically normalizes to `arhuse8.github.io/ARSolution/` so assets load seamlessly on mobile.
-- **Mobile Popup Safe WhatsApp Launcher**: Directly launches the native WhatsApp app on Android & iOS without popup blockers or blank windows.
-- **Narrow Screen Adaptation**: Responsive Floating WhatsApp Widget fits smoothly on all devices down to 320px screens.
-- **Client-Side Error Boundary**: Catches any browser incompatibilities and offers an instant reload button and WhatsApp coordinator helpline (+91 91127 68872).
-- **LocalStorage Direct Message Inbox**: Parent booking submissions are stored locally and accessible in the Coordinator Inbox on static GitHub Pages.
+- **Start Dev Server**: `npm run dev` (starts on `http://localhost:3000`)
+- **Build All Static Bundles**: `npm run build`
+  - Generates `dist/` (for GitHub Actions)
+  - Generates `docs/` (for GitHub Pages `/docs` deployment)
+  - Generates `assets/` (for root deployment fallback)
+- **Check Compilation**: `npm run lint`

@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx server.ts",
-    "build": "vite build && rm -rf docs && cp -r dist docs",
+    "build": "vite build && node scripts/prepare-pages.js",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist --dotfiles",
     "preview": "vite preview",

@@ -5,18 +5,20 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
 
-    <!-- Normalization for GitHub Pages on mobile browsers: ensures trailing slash for correct relative asset loading -->
+    <!-- Trailing slash normalization for GitHub Pages on mobile & desktop browsers -->
     <script>
       (function() {
         if (window.location.hostname.endsWith('github.io')) {
           var p = window.location.pathname;
-          var parts = p.split('/').filter(Boolean);
-          if (parts.length === 1 && !p.endsWith('/')) {
+          var last = p.split('/').pop();
+          if (!p.endsWith('/') && (!last || !last.includes('.'))) {
             window.location.replace(p + '/' + window.location.search + window.location.hash);
           }
         }
       })();
     </script>
+
+    
 
     <title>
       AR Solution Home Tutor - Find the Right Tutor for Your Child
@@ -66,8 +68,8 @@
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <script type="module" crossorigin src="./assets/index-C3Ecg7aq.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-1_uTsnvr.css">
+    <script type="module" crossorigin src="./assets/index.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index.css">
   </head>
 
   <body
@@ -75,22 +77,33 @@
   >
     <div id="root"></div>
 
-    <!-- Fallback if repository root is served on GitHub Pages without Vite build step -->
+    <!-- Production Bundle Loader for GitHub Pages root hosting (runs if redirect is bypassed) -->
     <script>
       (function() {
-        if (window.location.hostname.endsWith('github.io')) {
-          var isDev = window.location.port === '3000' || window.location.port === '5173';
-          var isRawTsx = document.querySelector('script[src*="/src/main.tsx"]');
-          if (!isDev && isRawTsx) {
-            var curr = window.location.pathname.endsWith('/') ? window.location.pathname : window.location.pathname + '/';
-            if (!curr.includes('/docs/')) {
-              window.location.replace(curr + 'docs/' + window.location.search + window.location.hash);
-            }
+        var isLocalDev = window.location.hostname === 'localhost' ||
+                         window.location.hostname === '127.0.0.1' ||
+                         window.location.port === '3000' ||
+                         window.location.port === '5173' ||
+                         window.location.hostname.endsWith('.run.app');
+
+        if (!isLocalDev && window.location.hostname.endsWith('github.io')) {
+          // Ensure stylesheet is loaded
+          if (!document.querySelector('link[href*="index.css"]')) {
+            var l = document.createElement('link');
+            l.rel = 'stylesheet';
+            l.href = './assets/index.css';
+            document.head.appendChild(l);
           }
+          // Load production JS bundle dynamically
+          var s = document.createElement('script');
+          s.type = 'module';
+          s.crossOrigin = '';
+          s.src = './assets/index.js';
+          document.head.appendChild(s);
         }
       })();
     </script>
 
-    <!-- React application entry point -->
+    <!-- React application entry point (transformed by Vite in dev and during build) -->
   </body>
 </html>

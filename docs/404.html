@@ -5,20 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AR Solution Home Tutor</title>
     <script type="text/javascript">
-      // GitHub Pages SPA router fallback: redirect 404s back to root index
       (function() {
         var l = window.location;
-        l.replace(
-          l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
-          l.pathname.split('/').slice(0, 1 + (l.pathname.startsWith('/') && l.pathname.split('/')[1] ? 1 : 0)).join('/') + '/?p=' +
-          encodeURIComponent(l.pathname.slice(1)) + (l.search ? '&q=' + encodeURIComponent(l.search.slice(1)) : '') +
-          l.hash
-        );
+        var pathParts = l.pathname.split('/').filter(Boolean);
+        var repoName = pathParts.length > 0 ? pathParts[0] : '';
+        var target = l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + '/' + (repoName ? repoName + '/' : '');
+        l.replace(target);
       })();
     </script>
   </head>
-  <body style="font-family: sans-serif; text-align: center; padding: 50px;">
-    <h2>Redirecting to AR Solution Home Tutor...</h2>
-    <p><a href="./">Click here if you are not redirected automatically.</a></p>
+  <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; text-align: center; padding: 40px; color: #1e293b; background: #f8fafc;">
+    <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 8px;">AR Solution Home Tutor</h2>
+    <p style="color: #64748b; font-size: 14px;">Redirecting you to the home page...</p>
+    <p style="margin-top: 16px;"><a href="./" style="display: inline-block; padding: 10px 20px; background: #4f46e5; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">Click here if not redirected</a></p>
   </body>
 </html>
