@@ -375,6 +375,13 @@ Respond ONLY with valid JSON, no markdown codeblocks, no surrounding text.`;
     }
   });
 
+  app.get('/api/teachers', (_req: Request, res: Response) => {
+    return res.json({
+      status: 'success',
+      teachers: teacherRegistrations,
+    });
+  });
+
   // Serve Frontend
   if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.resolve(__dirname, 'dist')));

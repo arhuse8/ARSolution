@@ -24,6 +24,7 @@ import {
 import { BoardId, SubjectOption } from '../types';
 import { SUPPORTED_BOARDS, getSubjectsForClassAndBoard } from '../data/mockData';
 import { useTheme } from '../context/ThemeContext';
+import { ConfettiRibbonBlast } from './ConfettiRibbonBlast';
 import {
   buildParentWhatsAppMessage,
   getWhatsAppUrl,
@@ -763,33 +764,63 @@ export const ExpandableClassFlow: React.FC<ExpandableClassFlowProps> = ({
           ) : (
             /* SUCCESS CONFIRMATION IN-PLACE CARD */
             <div
-              className={`p-6 sm:p-8 rounded-3xl border-2 shadow-rising animate-scale-up text-center ${
+              className={`relative overflow-hidden p-6 sm:p-8 rounded-3xl border-2 shadow-rising animate-scale-up text-center ${
                 isMidnight
                   ? 'bg-gradient-to-br from-emerald-950/40 via-[#0F172A] to-[#131B2E] border-emerald-500/40 text-white'
                   : 'bg-gradient-to-br from-emerald-50 via-teal-50/30 to-white border-emerald-300'
               }`}
             >
-              <div
-                className={`w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3 shadow-xs ${
-                  isMidnight ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-700'
-                }`}
-              >
-                <CheckCircle2 className="w-9 h-9 stroke-[2.5]" />
+              {/* Confetti & Ribbon Blast Animation */}
+              <ConfettiRibbonBlast />
+
+              <div className="relative inline-block mx-auto mb-2">
+                <div
+                  className={`w-14 h-14 rounded-full flex items-center justify-center mx-auto shadow-xs ${
+                    isMidnight ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-700'
+                  }`}
+                >
+                  <CheckCircle2 className="w-9 h-9 stroke-[2.5]" />
+                </div>
+                <span className="absolute -top-1 -right-1 text-2xl animate-bounce">🎉</span>
               </div>
 
-              <span
-                className={`text-[11px] font-extrabold px-3 py-0.5 rounded-full uppercase tracking-wider border ${
-                  isMidnight
-                    ? 'text-emerald-300 bg-emerald-500/20 border-emerald-400/40'
-                    : 'text-emerald-800 bg-emerald-100 border-emerald-300'
-                }`}
-              >
-                Request ID: {submittedData?.id || 'CONFIRMED'}
-              </span>
+              <div>
+                <span
+                  className={`text-[11px] font-extrabold px-3 py-0.5 rounded-full uppercase tracking-wider border ${
+                    isMidnight
+                      ? 'text-emerald-300 bg-emerald-500/20 border-emerald-400/40'
+                      : 'text-emerald-800 bg-emerald-100 border-emerald-300'
+                  }`}
+                >
+                  Request ID: {submittedData?.id || 'CONFIRMED'}
+                </span>
+              </div>
 
               <h4 className={`text-2xl sm:text-3xl font-black mt-2 ${isMidnight ? 'text-white' : 'text-slate-900'}`}>
-                Thank you! Form Submitted Successfully.
+                Congratulations! You Will Get Your Teacher Very Soon!
               </h4>
+              <p className={`text-xs sm:text-sm mt-1 max-w-md mx-auto ${isMidnight ? 'text-slate-300' : 'text-slate-600'}`}>
+                We have received your tuition requirements and forwarded them to our matching academic coordinator.
+              </p>
+
+              {/* 30-Minute Call Guarantee Banner */}
+              <div
+                className={`mt-4 p-4 rounded-3xl border-2 text-center space-y-1.5 max-w-md mx-auto shadow-md ${
+                  isMidnight
+                    ? 'bg-gradient-to-r from-emerald-950/60 via-teal-950/40 to-[#131B2E] border-emerald-500/40 text-emerald-100'
+                    : 'bg-gradient-to-r from-emerald-500/15 via-teal-500/15 to-indigo-500/15 border-emerald-500/40 text-emerald-950'
+                }`}
+              >
+                <div className="inline-flex items-center gap-2 text-emerald-700 dark:text-emerald-300 font-black text-sm sm:text-base">
+                  <Phone className="w-5 h-5 animate-bounce text-emerald-600 dark:text-emerald-400" />
+                  <span>In 30 Minutes You Will Get a Call!</span>
+                </div>
+                <p className={`text-xs leading-relaxed ${isMidnight ? 'text-slate-200' : 'text-slate-700'}`}>
+                  Our academic coordinator will call you at{' '}
+                  <strong className="text-emerald-600 dark:text-emerald-400 font-extrabold">{submittedData?.mobileNumber}</strong>{' '}
+                  within <strong>30 minutes</strong> to confirm your teacher matching and schedule your free 45-minute demo session.
+                </p>
+              </div>
 
               {/* WhatsApp Direct Action Banner */}
               <div
@@ -808,7 +839,7 @@ export const ExpandableClassFlow: React.FC<ExpandableClassFlowProps> = ({
                       Direct WhatsApp to {COORDINATOR_DISPLAY_PHONE}
                     </h5>
                     <p className="text-[11px] text-emerald-700 dark:text-emerald-400">
-                      All your typed tuition details were formatted for WhatsApp
+                      Your tuition details are ready to chat with our academic team
                     </p>
                   </div>
                 </div>
@@ -821,7 +852,7 @@ export const ExpandableClassFlow: React.FC<ExpandableClassFlowProps> = ({
                     className="w-full py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer active:scale-98"
                   >
                     <MessageCircle className="w-4 h-4 fill-current" />
-                    <span>Open WhatsApp ({COORDINATOR_PHONE_RAW})</span>
+                    <span>Open WhatsApp</span>
                     <ExternalLink className="w-3.5 h-3.5" />
                   </a>
 
@@ -848,36 +879,11 @@ export const ExpandableClassFlow: React.FC<ExpandableClassFlowProps> = ({
                     ) : (
                       <>
                         <Copy className="w-4 h-4 text-slate-400" />
-                        <span>Copy WhatsApp Text</span>
+                        <span>Copy Details</span>
                       </>
                     )}
                   </button>
                 </div>
-
-                <p className="text-[10px] text-emerald-700 dark:text-emerald-400 text-center">
-                  If WhatsApp didn't open automatically, tap <strong>Open WhatsApp</strong> or <strong>Copy Text</strong> above.
-                </p>
-              </div>
-
-              {/* Message Bubble Preview */}
-              <div
-                className={`mt-4 p-3.5 rounded-2xl border text-left text-xs space-y-1.5 max-w-md mx-auto ${
-                  isMidnight
-                    ? 'bg-[#070A13] border-slate-800 text-slate-300'
-                    : 'bg-slate-50 border-slate-200 text-slate-700'
-                }`}
-              >
-                <div className="flex items-center justify-between pb-1 border-b border-slate-200/60 dark:border-slate-800">
-                  <span className="text-[11px] font-bold text-slate-500 flex items-center gap-1">
-                    <MessageCircle className="w-3 h-3 text-emerald-500" /> Formatted Message to {COORDINATOR_PHONE_RAW}:
-                  </span>
-                  <span className="text-[10px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded font-bold">
-                    Clean Format
-                  </span>
-                </div>
-                <pre className="font-mono text-[11px] whitespace-pre-wrap leading-relaxed">
-                  {inlineWhatsappMsg}
-                </pre>
               </div>
 
               <p className={`text-xs sm:text-sm max-w-lg mx-auto mt-2 leading-relaxed ${isMidnight ? 'text-slate-300' : 'text-slate-600'}`}>

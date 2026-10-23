@@ -11,8 +11,27 @@ import {
   ShieldCheck,
   FileText,
   UserCheck,
+  MessageCircle,
+  Briefcase,
+  Copy,
+  ExternalLink,
+  PhoneCall,
+  GraduationCap,
+  BookOpen,
+  MapPin,
+  Calendar,
 } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
+import { ConfettiRibbonBlast } from './ConfettiRibbonBlast';
 import { TeacherRegistration } from '../types';
+import {
+  buildTeacherWhatsAppMessage,
+  sendToWhatsApp,
+  copyToClipboard,
+  saveTeacherSubmission,
+  COORDINATOR_DISPLAY_PHONE,
+  COORDINATOR_PHONE_RAW,
+} from '../utils/whatsapp';
 
 interface TeacherRegistrationModalProps {
   isOpen: boolean;
@@ -63,11 +82,14 @@ export const TeacherRegistrationModal: React.FC<TeacherRegistrationModalProps> =
   onClose,
   onSuccess,
 }) => {
+  const { isMidnight } = useTheme();
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [formData, setFormData] = useState<TeacherRegistration>(INITIAL_FORM);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittedApplicationId, setSubmittedApplicationId] = useState<string | null>(null);
+  const [generatedWhatsappMessage, setGeneratedWhatsappMessage] = useState<string>('');
+  const [copiedMessage, setCopiedMessage] = useState<boolean>(false);
 
   // ESC key support
   useEffect(() => {
@@ -178,10 +200,21 @@ export const TeacherRegistrationModal: React.FC<TeacherRegistrationModalProps> =
     }));
   };
 
+  const handleCopy = async () => {
+    if (!generatedWhatsappMessage) return;
+    const ok = await copyToClipboard(generatedWhatsappMessage);
+    if (ok) {
+      setCopiedMessage(true);
+      setTimeout(() => setCopiedMessage(false), 2500);
+    }
+  };
+
   const handleSubmit = async () => {
     if (!validateStep(4) || isSubmitting) return;
 
     setIsSubmitting(true);
+    let appId = `TCHR-${Math.floor(100000 + Math.random() * 900000)}`;
+
     try {
       const response = await fetch('/api/register-teacher', {
         method: 'POST',
@@ -189,19 +222,37 @@ export const TeacherRegistrationModal: React.FC<TeacherRegistrationModalProps> =
         body: JSON.stringify(formData),
       });
 
-      const data = await response.json();
-      const appId = data.applicationId || `TCHR-${Math.floor(100000 + Math.random() * 900000)}`;
-
-      setSubmittedApplicationId(appId);
-      onSuccess(appId);
-    } catch (err) {
-      // In case server is offline, fallback gracefully with client prototype ID
-      const fallbackId = `TCHR-${Math.floor(100000 + Math.random() * 900000)}`;
-      setSubmittedApplicationId(fallbackId);
-      onSuccess(fallbackId);
-    } finally {
-      setIsSubmitting(false);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.applicationId) {
+          appId = data.applicationId;
+        }
+      }
+    } catch {
+      // In case server is offline or deployed as static site (e.g. GitHub Pages), fallback gracefully
+      console.info('Operating in client/static mode for teacher registration');
     }
+
+    // 1. Build formatted WhatsApp message with complete teacher information
+    const whatsappMsg = buildTeacherWhatsAppMessage(formData, appId);
+    setGeneratedWhatsappMessage(whatsappMsg);
+    setSubmittedApplicationId(appId);
+
+    // 2. Persist locally for offline & GitHub Pages support
+    saveTeacherSubmission({
+      id: appId,
+      ...formData,
+      status: 'UNDER_ADMIN_REVIEW',
+      createdAt: new Date().toISOString(),
+      whatsappMessage: whatsappMsg,
+      whatsappNumber: COORDINATOR_PHONE_RAW,
+    });
+
+    // 3. Immediately redirect / launch WhatsApp to coordinator +91 91127 68872 like parents flow!
+    sendToWhatsApp(whatsappMsg);
+
+    onSuccess(appId);
+    setIsSubmitting(false);
   };
 
   return (
@@ -685,39 +736,143 @@ export const TeacherRegistrationModal: React.FC<TeacherRegistrationModalProps> =
             </div>
           </div>
         ) : (
-          /* Confirmation Screen after Submission (Requirement 10) */
-          <div className="py-8 text-center space-y-4 animate-scale-up">
-            <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto shadow-xs">
-              <CheckCircle2 className="w-10 h-10 stroke-[2.5]" />
-            </div>
+          /* Confirmation Screen after Submission with Direct WhatsApp Flow */
+          <div className="py-6 space-y-5 animate-scale-up text-left relative">
+            {/* Canvas Celebration Ribbon & Confetti Blast */}
+            <ConfettiRibbonBlast />
 
-            <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full uppercase tracking-wider border border-emerald-200">
-              Application ID: {submittedApplicationId}
-            </span>
+            <div className="text-center space-y-3">
+              <div className="relative inline-block mx-auto">
+                <div className="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto shadow-xl ring-4 ring-emerald-500/25">
+                  <CheckCircle2 className="w-10 h-10 stroke-[2.5]" />
+                </div>
+                <span className="absolute -top-1 -right-1 text-2xl animate-bounce">🎉</span>
+              </div>
 
-            <h3 className="text-2xl font-extrabold text-slate-900 tracking-tight">
-              Your teacher registration has been received.
-            </h3>
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                <span className="text-xs font-black text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-3 py-1 rounded-full uppercase tracking-wider border border-emerald-300 dark:border-emerald-700">
+                  Application ID: #{submittedApplicationId}
+                </span>
+                <span className="text-xs font-bold text-indigo-700 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-3 py-1 rounded-full border border-indigo-200 dark:border-indigo-800 flex items-center gap-1">
+                  <MessageCircle className="w-3.5 h-3.5 text-emerald-500 fill-current" />
+                  Sent to WhatsApp
+                </span>
+              </div>
 
-            <p className="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
-              Thank you for applying to join AR Solution Home Tutor. Your educator profile is now under administrative review. We will contact you on WhatsApp/Phone for document verification and a brief introductory interview within 24–48 hours.
-            </p>
+              <h3 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+                Congratulations! Welcome to AR Solution!
+              </h3>
 
-            <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-left text-xs text-amber-900 max-w-md mx-auto flex items-start gap-3">
-              <ShieldCheck className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
-              <div>
-                <p className="font-bold">Verification Policy</p>
-                <p className="text-amber-800 mt-0.5">
-                  Teachers are not automatically published. Our academic team conducts background and degree verification before making your profile active.
+              {/* 24-Hour Assignment Guarantee Callout */}
+              <div className="p-4 rounded-3xl bg-gradient-to-r from-indigo-500/15 via-purple-500/15 to-emerald-500/15 border-2 border-indigo-500/40 text-center space-y-1.5 max-w-lg mx-auto shadow-md">
+                <div className="inline-flex items-center gap-2 text-indigo-700 dark:text-indigo-300 font-black text-sm sm:text-base">
+                  <Briefcase className="w-5 h-5 animate-bounce text-indigo-600 dark:text-indigo-400" />
+                  <span>Congratulations! You Will Get an Assignment Within 24 Hours!</span>
+                </div>
+                <p className="text-xs text-slate-700 dark:text-slate-200 leading-relaxed">
+                  Our academic panel is reviewing your qualifications ({formData.highestQualification}) and will reach out to you on{' '}
+                  <strong className="text-indigo-600 dark:text-indigo-400 font-extrabold">{formData.mobileNumber}</strong>{' '}
+                  within <strong>24 hours</strong> with student tuition assignments in your area ({formData.city}).
                 </p>
               </div>
             </div>
 
-            <div className="pt-4">
+            {/* Primary Action Buttons */}
+            <div className="space-y-2.5 max-w-md mx-auto">
+              <button
+                type="button"
+                onClick={() => sendToWhatsApp(generatedWhatsappMessage)}
+                className="w-full flex items-center justify-center gap-2.5 py-3.5 px-6 rounded-2xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-extrabold text-sm sm:text-base shadow-lg shadow-emerald-500/20 cursor-pointer transition-all"
+              >
+                <MessageCircle className="w-5 h-5 fill-current" />
+                <span>Open WhatsApp Chat with Coordinator</span>
+                <ExternalLink className="w-4 h-4 ml-1 opacity-80" />
+              </button>
+            </div>
+
+            {/* Quick Summary Grid */}
+            <div className={`p-4 sm:p-5 rounded-2xl border text-xs sm:text-sm space-y-3 ${
+              isMidnight
+                ? 'bg-slate-900/80 border-slate-800 text-slate-300'
+                : 'bg-slate-50 border-slate-200 text-slate-700'
+            }`}>
+              <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+                <span className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                  <UserCheck className="w-4 h-4 text-indigo-500" />
+                  Educator Profile Summary
+                </span>
+                <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+                  Ready for Verification
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+                <div>
+                  <span className="text-slate-400 block text-[11px]">Educator Name</span>
+                  <span className="font-bold text-slate-900 dark:text-white">{formData.fullName}</span>
+                </div>
+                <div>
+                  <span className="text-slate-400 block text-[11px]">Contact & WhatsApp</span>
+                  <span className="font-bold text-slate-900 dark:text-white">{formData.mobileNumber}</span>
+                </div>
+                <div>
+                  <span className="text-slate-400 block text-[11px]">Location</span>
+                  <span className="font-semibold text-slate-800 dark:text-slate-200">{formData.city} ({formData.areaOrPinCode})</span>
+                </div>
+                <div>
+                  <span className="text-slate-400 block text-[11px]">Qualification & Experience</span>
+                  <span className="font-semibold text-slate-800 dark:text-slate-200">{formData.highestQualification} • {formData.teachingExperience}</span>
+                </div>
+                <div className="sm:col-span-2">
+                  <span className="text-slate-400 block text-[11px]">Classes & Boards</span>
+                  <span className="font-semibold text-slate-800 dark:text-slate-200">
+                    Classes {formData.classesTaught.join(', ')} ({formData.boardsTaught.join(', ')})
+                  </span>
+                </div>
+                <div className="sm:col-span-2">
+                  <span className="text-slate-400 block text-[11px]">Subjects</span>
+                  <span className="font-semibold text-slate-800 dark:text-slate-200">{formData.subjectsTaught.join(', ')}</span>
+                </div>
+                <div>
+                  <span className="text-slate-400 block text-[11px]">Mode</span>
+                  <span className="font-semibold text-slate-800 dark:text-slate-200">{formData.teachingMode}</span>
+                </div>
+                <div>
+                  <span className="text-slate-400 block text-[11px]">Expected Fee</span>
+                  <span className="font-semibold text-emerald-600 dark:text-emerald-400 font-bold">
+                    ₹{formData.feePerSession} / session ({formData.sessionDuration})
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Verification Notice */}
+            <div className="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-xs text-amber-900 dark:text-amber-300 flex items-start gap-2.5">
+              <ShieldCheck className="w-5 h-5 text-amber-700 dark:text-amber-400 shrink-0 mt-0.5" />
+              <div>
+                <p className="font-bold">Next Step: Verification & Interview</p>
+                <p className="text-amber-800 dark:text-amber-400/90 mt-0.5">
+                  Our academic coordinator will reach out on WhatsApp/Phone at {formData.mobileNumber} within 24–48 hours for degree check and a short 15-minute demonstration session.
+                </p>
+              </div>
+            </div>
+
+            {/* Coordinator Helpline Pill */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+              <div className="text-xs text-slate-500 dark:text-slate-400 text-center sm:text-left">
+                Direct Helpline Coordinator:{' '}
+                <a
+                  href={`tel:${COORDINATOR_PHONE_RAW}`}
+                  className="font-bold text-emerald-600 dark:text-emerald-400 hover:underline"
+                >
+                  {COORDINATOR_DISPLAY_PHONE}
+                </a>
+              </div>
+
               <button
                 type="button"
                 onClick={onClose}
-                className="bg-[#4338CA] hover:bg-indigo-800 text-white font-bold text-xs sm:text-sm px-6 py-3 rounded-xl shadow-md cursor-pointer"
+                className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 text-white font-bold text-xs shadow-md cursor-pointer transition-colors"
               >
                 Done / Back to Home
               </button>
